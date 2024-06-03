@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Rooms and Students</h2>
+<ul>
+    {% for room in rooms %}
+    <li>Room {{ room.room_number }} - {{ room.students|length }} / 4 Students</li>
+    {% endfor %}
+</ul>
+{% endblock %}

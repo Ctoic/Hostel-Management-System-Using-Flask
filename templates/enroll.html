@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Enroll Student</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.name.label }}<br>
+        {{ form.name(size=32) }}
+    </p>
+    <p>
+        {{ form.room_number.label }}<br>
+        {{ form.room_number() }}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}
