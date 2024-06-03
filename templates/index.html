@@ -1,5 +1,17 @@
 {% extends 'base.html' %}
 
+{% block title %}Home{% endblock %}
+
 {% block content %}
-<h1>Welcome to the Hostel Management System</h1>
+<div class="d-flex justify-content-center">
+    <div class="card text-center">
+        <div class="card-body">
+            <h1 class="card-title">Hostel Management</h1>
+            <p class="card-text">Welcome to the Hostel Management System</p>
+            <a href="{{ url_for('enroll') }}" class="btn btn-primary mb-2">Enroll Student</a>
+            <a href="{{ url_for('students') }}" class="btn btn-primary mb-2">View Students</a>
+            <a href="{{ url_for('rooms') }}" class="btn btn-primary">View Rooms</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

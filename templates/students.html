@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<body>
+    <h1>Students and their Assigned Rooms</h1>
+    <table class = "table table-dark">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Room Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.name }}</td>
+                <td>{{ student.room.room_number }}</td>                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+{% endblock %}

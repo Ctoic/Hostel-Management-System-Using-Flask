@@ -48,4 +48,4 @@ def rooms():
     return render_template('rooms.html', rooms=all_rooms)
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
