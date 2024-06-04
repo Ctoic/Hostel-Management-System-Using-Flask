@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash
-from models import db, Student, Room
+from models import db, Student, Room , Expense
 from forms import EnrollForm
+from forms import ExpenseForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -46,6 +47,21 @@ def students():
 def rooms():
     all_rooms = Room.query.all()
     return render_template('rooms.html', rooms=all_rooms)
+
+@app.route('/expenses', methods=['GET', 'POST'])
+def expenses():
+    form = ExpenseForm()
+    if form.validate_on_submit():
+        expense = Expense(item_name=form.item_name.data, price=form.price.data)
+        db.session.add(expense)
+        db.session.commit()
+        flash('Expense added successfully', 'success')
+        return redirect(url_for('expenses'))
+    
+    all_expenses = Expense.query.all()
+    total_expense = sum(expense.price for expense in all_expenses)
+    return render_template('expenses.html', form=form, expenses=all_expenses, total=total_expense)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

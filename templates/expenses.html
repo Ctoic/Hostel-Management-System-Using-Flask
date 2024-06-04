@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Expenses{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center">Monthly Expenses</h1>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.item_name.label(class="form-label") }}
+                    {{ form.item_name(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.price.label(class="form-label") }}
+                    {{ form.price(class="form-control") }}
+                </div>
+                <div class="d-flex justify-content-center">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<h2 class="text-center mt-5">Expense List</h2>
+<div class="d-flex justify-content-center">
+    <div class="card w-75">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Price</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.item_name }}</td>
+                        <td>{{ expense.price }}</td>
+                        <td>{{ expense.date.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3 class="text-center">Total Expense: ${{ total }}</h3>
+        </div>
+    </div>
+</div>
+{% endblock %}

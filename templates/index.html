@@ -42,15 +42,34 @@
     </button>
 </div>
 
-<div class="d-flex justify-content-center mt-4">
-    <div class="card text-center">
-        <div class="card-body">
-            <h1 class="card-title">Hostel Management</h1>
-            <p class="card-text">Welcome to the Hostel Management System</p>
-            <a href="{{ url_for('enroll') }}" class="btn btn-primary mb-2">Enroll Student</a>
-            <a href="{{ url_for('students') }}" class="btn btn-primary mb-2">View Students</a>
-            <a href="{{ url_for('rooms') }}" class="btn btn-primary mb-2">View Rooms</a>
+<div class="container mt-5">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <img src="{{ url_for('static', filename='images/6.png') }}" class="card-img-top" alt="Service 1">
+                    <h5 class="card-title mt-3">Service 1</h5>
+                    <p class="card-text">Description of the first service provided by the hostel.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <img src="{{ url_for('static', filename='images/5.png') }}" class="card-img-top" alt="Service 2">
+                    <h5 class="card-title mt-3">Service 2</h5>
+                    <p class="card-text">Description of the second service provided by the hostel.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <img src="{{ url_for('static', filename='images/4.png') }}" class="card-img-top" alt="Service 3">
+                    <h5 class="card-title mt-3">Service 3</h5>
+                    <p class="card-text">Description of the third service provided by the hostel.</p>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
