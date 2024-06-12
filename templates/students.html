@@ -1,25 +1,33 @@
 {% extends 'base.html' %}
 
+{% block title %}Students{% endblock %}
+
 {% block content %}
-
-<body>
-    <h1>Students and their Assigned Rooms</h1>
-    <table class = "table table-dark">
-        <thead>
-            <tr>
-                <th>Student Name</th>
-                <th>Room Number</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in students %}
-            <tr>
-                <td>{{ student.name }}</td>
-                <td>{{ student.room.room_number }}</td>                
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-
+<h1 class="text-center">Students</h1>
+<div class="d-flex justify-content-center">
+    <div class="card w-75">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Room</th>
+                        <th>Fee</th>
+                        <th>Picture</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.room.room_number }}</td>
+                        <td>{{ student.fee }}</td>
+                        <td><img src="{{ url_for('static', filename='uploads/' ~ student.picture) }}" alt="Student Picture" width="100"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

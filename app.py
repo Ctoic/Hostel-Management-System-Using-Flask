@@ -1,17 +1,24 @@
+import os
+from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, flash
-from models import db, Student, Room , Expense
-from forms import EnrollForm
-from forms import ExpenseForm
+from models import db, Student, Room, Expense
+from forms import EnrollForm, ExpenseForm
+from flask_migrate import Migrate
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hostel.db'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 db.init_app(app)
+
+# After initializing db
+migrate = Migrate(app, db)
+
 
 @app.before_request
 
 def create_tables():
-    app.before_request_funcs[None].remove(create_tables)
     db.create_all()
     for i in range(1, 9):
         if not Room.query.filter_by(room_number=i).first():
@@ -27,9 +34,15 @@ def index():
 def enroll():
     form = EnrollForm()
     if form.validate_on_submit():
+        # Handle picture upload
+        picture_file = form.picture.data
+        filename = secure_filename(picture_file.filename)
+        picture_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        # Create a new student
         room = Room.query.filter_by(room_number=form.room_number.data).first()
         if room and len(room.students) < 4:
-            student = Student(name=form.name.data, room=room)
+            student = Student(name=form.name.data, fee=form.fee.data, picture=filename, room=room)
             db.session.add(student)
             db.session.commit()
             flash('Student enrolled successfully', 'success')
@@ -57,11 +70,14 @@ def expenses():
         db.session.commit()
         flash('Expense added successfully', 'success')
         return redirect(url_for('expenses'))
-    
+
     all_expenses = Expense.query.all()
     total_expense = sum(expense.price for expense in all_expenses)
     return render_template('expenses.html', form=form, expenses=all_expenses, total=total_expense)
 
-
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+

@@ -1,19 +1,35 @@
 {% extends 'base.html' %}
-<link rel= "stylesheet" type= "text/css" href= "../styles/mainpage.css">
+
+{% block title %}Enroll{% endblock %}
 
 {% block content %}
-<h2 class ="h2-enroll">Enroll Student</h2>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.name.label }}<br>
-        {{ form.name(size=32) }}
-    </p>
-    <p>
-        {{ form.room_number.label }}<br>
-        {{ form.room_number() }}
-    </p>
-    
-    <p>{{ form.submit() }}</p>
-</form>
+<h1 class="text-center">Enroll Student</h1>
+<div class="d-flex justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.name.label(class="form-label") }}
+                    {{ form.name(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.fee.label(class="form-label") }}
+                    {{ form.fee(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.picture.label(class="form-label") }}
+                    {{ form.picture(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.room_number.label(class="form-label") }}
+                    {{ form.room_number(class="form-control") }}
+                </div>
+                <div class="d-flex justify-content-center">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

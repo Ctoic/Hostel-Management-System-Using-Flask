@@ -1,0 +1,110 @@
+# Hostel Management System
+
+This is a Flask-based web application for managing a hostel. It includes functionalities for enrolling students, managing rooms, tracking expenses, and more.
+
+## Features
+
+- Enroll students with details including name, fee, room number, and picture.
+- Manage rooms and see which students are assigned to which rooms.
+- Track monthly expenses by adding items and their prices.
+- View a list of all students and rooms.
+- Responsive design using Bootstrap.
+
+## Technologies Used
+
+- Python
+- Flask
+- SQLAlchemy
+- Flask-WTF
+- Bootstrap
+- SQLite
+
+## Setup and Installation
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/yourusername/hostel-management-system.git
+    cd hostel-management-system
+    ```
+
+2. Create a virtual environment and activate it:
+
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
+
+3. Install the dependencies:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Initialize the database:
+
+    ```bash
+    flask db init
+    flask db migrate -m "Initial migration."
+    flask db upgrade
+    ```
+
+5. Run the application:
+
+    ```bash
+    flask run
+    ```
+
+6. Open your browser and navigate to `http://127.0.0.1:5000`.
+
+## Application Structure
+
+- `app.py`: Main application file containing routes and logic.
+- `models.py`: Database models for Student, Room, and Expense.
+- `forms.py`: Forms for enrolling students and adding expenses.
+- `templates/`: HTML templates for the application pages.
+- `static/`: Static files including CSS and images.
+- `migrations/`: Database migration files.
+
+## Routes
+
+- `/`: Home page with links to enroll, view students, view rooms, and manage expenses.
+- `/enroll`: Form to enroll a new student.
+- `/students`: List of all enrolled students.
+- `/rooms`: List of all rooms and their assigned students.
+- `/expenses`: Form to add expenses and view total monthly expenses.
+
+## Screenshots
+
+### Home Page
+
+![Home Page](static/screenshots/home.png)
+
+### Enroll Student
+
+![Enroll Student](static/screenshots/enroll.png)
+
+### Students List
+
+![Students List](static/screenshots/students.png)
+
+### Rooms List
+
+![Rooms List](static/screenshots/rooms.png)
+
+### Expenses
+
+![Expenses](static/screenshots/expenses.png)
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+## Contact
+
+For any questions or suggestions, please contact [najamabass2020@gmail.com](mailto:your-email@example.com).
+
