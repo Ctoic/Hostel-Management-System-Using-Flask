@@ -15,9 +15,6 @@ db.init_app(app)
 # After initializing db
 migrate = Migrate(app, db)
 
-
-@app.before_request
-
 def create_tables():
     db.create_all()
     for i in range(1, 9):
@@ -43,9 +40,13 @@ def enroll():
         room = Room.query.filter_by(room_number=form.room_number.data).first()
         if room and len(room.students) < 4:
             student = Student(name=form.name.data, fee=form.fee.data, picture=filename, room=room)
-            db.session.add(student)
-            db.session.commit()
-            flash('Student enrolled successfully', 'success')
+            try:
+                db.session.add(student)
+                db.session.commit()
+                flash('Student enrolled successfully', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error enrolling student: {e}', 'danger')
             return redirect(url_for('index'))
         else:
             flash('Room is full or does not exist', 'danger')
@@ -66,9 +67,13 @@ def expenses():
     form = ExpenseForm()
     if form.validate_on_submit():
         expense = Expense(item_name=form.item_name.data, price=form.price.data)
-        db.session.add(expense)
-        db.session.commit()
-        flash('Expense added successfully', 'success')
+        try:
+            db.session.add(expense)
+            db.session.commit()
+            flash('Expense added successfully', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error adding expense: {e}', 'danger')
         return redirect(url_for('expenses'))
 
     all_expenses = Expense.query.all()
@@ -77,7 +82,3 @@ def expenses():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
