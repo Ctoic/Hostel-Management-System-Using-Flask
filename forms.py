@@ -17,3 +17,9 @@ class ExpenseForm(FlaskForm):
     price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0)])
     date = DateField('Date', validators=[DataRequired()])  # DateField added to ExpenseForm
     submit = SubmitField('Add Expense')
+
+class IssueForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = StringField('Description', validators=[DataRequired()])
+    status = StringField('Status', validators=[DataRequired()])
+    submit = SubmitField('Add Issue')
