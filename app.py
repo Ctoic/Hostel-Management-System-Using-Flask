@@ -1,8 +1,8 @@
 import os
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, flash
-from models import db, Student, Room, Expense
-from forms import EnrollForm, ExpenseForm
+from models import db, Student, Room, Expense, Issue
+from forms import EnrollForm, ExpenseForm, IssueForm
 from flask_migrate import Migrate
 
 
@@ -79,6 +79,23 @@ def expenses():
     all_expenses = Expense.query.all()
     total_expense = sum(expense.price for expense in all_expenses)
     return render_template('expenses.html', form=form, expenses=all_expenses, total=total_expense)
+
+@app.route('/issues', methods=['GET', 'POST'])
+def issues():
+    form = IssueForm()
+    if form.validate_on_submit():
+        issue = Issue(title=form.title.data, description=form.description.data, status=form.status.data)
+        try:
+            db.session.add(issue)
+            db.session.commit()
+            flash('Issue added successfully', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error adding issue: {e}', 'danger')
+        return redirect(url_for('issues'))
+
+    all_issues = Issue.query.all()
+    return render_template('issues.html', form=form, issues=all_issues)
 
 if __name__ == '__main__':
     app.run(debug=True)
