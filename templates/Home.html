@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to the Hostel Management System</h1>
+        
+    </header>
+    <!-- Header with Navigation -->
+    <header>
+        <div class="nav-bar">
+            <h1>Hostel Management System</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('student_login') }}">Student Login</a></li>
+                    <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Scrolling Hostel Images (Carousel) -->
+    <div id="hostelCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#hostelCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#hostelCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#hostelCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{{ url_for('static', filename='images/hostel1.jpg') }}" class="d-block w-100" alt="Hostel Image 1">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ url_for('static', filename='images/hostel2.jpg') }}" class="d-block w-100" alt="Hostel Image 2">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ url_for('static', filename='images/hostel3.jpg') }}" class="d-block w-100" alt="Hostel Image 3">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#hostelCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#hostelCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Rest of your page content -->
+</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    
+
+    <!-- Main Section -->
+    <div class="container">
+        <section class="intro">
+            <h2>Welcome to Our Hostel</h2>
+            <p>We provide top-notch facilities to ensure a comfortable and secure stay for all students.</p>
+        </section>
+
+        <!-- Photo Gallery -->
+        <section class="gallery">
+            <h2>Our Hostel</h2>
+            <div class="photo-gallery">
+                <img src="{{ url_for('static', filename='images/hostel_image1.jpg') }}" alt="Hostel Image 1">
+                <img src="{{ url_for('static', filename='images/hostel_image2.jpg') }}" alt="Hostel Image 2">
+                <img src="{{ url_for('static', filename='images/hostel_image3.jpg') }}" alt="Hostel Image 3">
+                <img src="{{ url_for('static', filename='images/hostel_image4.jpg') }}" alt="Hostel Image 4">
+            </div>
+        </section>
+
+        <!-- Facilities Section -->
+        <section class="facilities">
+            <h2>Facilities Provided</h2>
+            <ul>
+                <li>24/7 Security with CCTV Surveillance</li>
+                <li>Wi-Fi Internet Connectivity</li>
+                <li>Clean and Hygienic Rooms</li>
+                <li>Recreational Area with Sports and Gym</li>
+                <li>Mess Facility with Nutritious Meals</li>
+                <li>Medical Assistance</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- Footer with Interactive Elements -->
+    <footer>
+        <div class="footer-content">
+            <!-- Contact Information in One Line -->
+            <div class="contact-info">
+                <p>Address:Mira Road , Sangli, 415311</p>
+                <p>Phone: <a href="tel:+918695241237" class="interactive-link">+914562127894</a></p>
+                <p>Email: <a href="mailto:contact@hostelmanagement.com" class="interactive-link">contact@hostelmanagement.com</a></p>
+            </div>
+
+            <!-- Social Media Icons -->
+            <div class="social-icons">
+                <a href="https://www.facebook.com" target="_blank" class="social-icon">
+                    <img src="{{ url_for('static', filename='images/facebook-icon.png') }}" alt="Facebook">
+                </a>
+                <a href="https://www.twitter.com" target="_blank" class="social-icon">
+                    <img src="{{ url_for('static', filename='images/twitter-icon.png') }}" alt="Twitter">
+                </a>
+                <a href="https://www.instagram.com" target="_blank" class="social-icon">
+                    <img src="{{ url_for('static', filename='images/instagram-icon.png') }}" alt="Instagram">
+                </a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
+
+

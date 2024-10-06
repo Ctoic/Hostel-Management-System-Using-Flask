@@ -1,101 +1,36 @@
-import os
-from werkzeug.utils import secure_filename
-from flask import Flask, render_template, redirect, url_for, flash
-from models import db, Student, Room, Expense, Issue
-from forms import EnrollForm, ExpenseForm, IssueForm
-from flask_migrate import Migrate
-
+from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hostel.db'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
-db.init_app(app)
+app.secret_key = "your_secret_key"
 
-# After initializing db
-migrate = Migrate(app, db)
+# Dummy data for students and rooms
+students = {}
+rooms = {}
 
-def create_tables():
-    db.create_all()
-    for i in range(1, 9):
-        if not Room.query.filter_by(room_number=i).first():
-            room = Room(room_number=i)
-            db.session.add(room)
-    db.session.commit()
-
+# Homepage Route
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('home.html')
 
-@app.route('/enroll', methods=['GET', 'POST'])
-def enroll():
-    form = EnrollForm()
-    if form.validate_on_submit():
-        # Handle picture upload
-        picture_file = form.picture.data
-        filename = secure_filename(picture_file.filename)
-        picture_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+# Student Login
+@app.route('/student_login')
+def student_login():
+    return render_template('student_login.html')
 
-        # Create a new student
-        room = Room.query.filter_by(room_number=form.room_number.data).first()
-        if room and len(room.students) < 4:
-            student = Student(name=form.name.data, fee=form.fee.data, picture=filename, room=room)
-            try:
-                db.session.add(student)
-                db.session.commit()
-                flash('Student enrolled successfully', 'success')
-            except Exception as e:
-                db.session.rollback()
-                flash(f'Error enrolling student: {e}', 'danger')
-            return redirect(url_for('index'))
-        else:
-            flash('Room is full or does not exist', 'danger')
-    return render_template('enroll.html', form=form)
+# Admin Login
+@app.route('/admin_login')
+def admin_login():
+    return render_template('admin_login.html')
 
-@app.route('/students')
-def students():
-    all_students = Student.query.all()
-    return render_template('students.html', students=all_students)
+# Room Management (Admin Only)
+@app.route('/room_management')
+def room_management():
+    return render_template('room_management.html')
 
-@app.route('/rooms')
-def rooms():
-    all_rooms = Room.query.all()
-    return render_template('rooms.html', rooms=all_rooms)
-
-@app.route('/expenses', methods=['GET', 'POST'])
-def expenses():
-    form = ExpenseForm()
-    if form.validate_on_submit():
-        expense = Expense(item_name=form.item_name.data, price=form.price.data)
-        try:
-            db.session.add(expense)
-            db.session.commit()
-            flash('Expense added successfully', 'success')
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error adding expense: {e}', 'danger')
-        return redirect(url_for('expenses'))
-
-    all_expenses = Expense.query.all()
-    total_expense = sum(expense.price for expense in all_expenses)
-    return render_template('expenses.html', form=form, expenses=all_expenses, total=total_expense)
-
-@app.route('/issues', methods=['GET', 'POST'])
-def issues():
-    form = IssueForm()
-    if form.validate_on_submit():
-        issue = Issue(title=form.title.data, description=form.description.data, status=form.status.data)
-        try:
-            db.session.add(issue)
-            db.session.commit()
-            flash('Issue added successfully', 'success')
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error adding issue: {e}', 'danger')
-        return redirect(url_for('issues'))
-
-    all_issues = Issue.query.all()
-    return render_template('issues.html', form=form, issues=all_issues)
+# Student Registration
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
