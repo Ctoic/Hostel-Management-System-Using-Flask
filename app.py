@@ -1,9 +1,10 @@
 import os
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, redirect, url_for, flash
-from models import db, Student, Room, Expense, Issue
-from forms import EnrollForm, ExpenseForm, IssueForm
+from flask import Flask, render_template, redirect, url_for, flash, request
+from models import db, Student, Room, Expense, Issue, Admin
+from forms import EnrollForm, ExpenseForm, IssueForm, AdminRegisterForm
 from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash
 
 
 app = Flask(__name__)
@@ -120,6 +121,26 @@ def issues():
 
     all_issues = Issue.query.all()
     return render_template('issues.html', form=form, issues=all_issues)
+
+@app.route('/admin_register', methods=['GET', 'POST'])
+def admin_register():
+    form = AdminRegisterForm()
+    if form.validate_on_submit():
+        existing_admin = Admin.query.filter_by(email=form.email.data).first()
+        if existing_admin:
+            flash('Email already in use', 'danger')
+        else:
+            hashed_password = generate_password_hash(form.password.data)
+            new_admin = Admin(name=form.name.data, email=form.email.data, password=hashed_password)
+            try:
+                db.session.add(new_admin)
+                db.session.commit()
+                flash('Admin registered successfully', 'success')
+                return redirect(url_for('admin_login'))
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error registering admin: {e}', 'danger')
+    return render_template('admin_register.html', form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)
