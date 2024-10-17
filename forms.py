@@ -23,3 +23,8 @@ class IssueForm(FlaskForm):
     description = StringField('Description', validators=[DataRequired()])
     status = StringField('Status', validators=[DataRequired()])
     submit = SubmitField('Add Issue')
+
+class AdminLoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
