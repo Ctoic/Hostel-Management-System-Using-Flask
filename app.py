@@ -52,10 +52,16 @@ def admin_login():
         admin = Admin.query.filter_by(username=form.username.data).first()
         if admin and bcrypt.check_password_hash(admin.password_hash, form.password.data):
             login_user(admin)
-            return redirect(url_for('room_management'))
+            return redirect(url_for('admin_dashboard'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('admin_login.html', form=form)
+
+# Admin Dashboard
+@app.route('/admin_dashboard')
+@login_required
+def admin_dashboard():
+    return render_template('admin_dashboard.html')
 
 # Room Management (Admin Only)
 @app.route('/room_management')
@@ -73,6 +79,7 @@ if __name__ == '__main__':
 
 
 @app.route('/enroll', methods=['GET', 'POST'])
+@login_required
 def enroll():
     form = EnrollForm()
     if form.validate_on_submit():
@@ -98,16 +105,19 @@ def enroll():
     return render_template('enroll.html', form=form)
 
 @app.route('/students')
+@login_required
 def students():
     all_students = Student.query.all()
     return render_template('students.html', students=all_students)
 
 @app.route('/rooms')
+@login_required
 def rooms():
     all_rooms = Room.query.all()
     return render_template('rooms.html', rooms=all_rooms)
 
 @app.route('/expenses', methods=['GET', 'POST'])
+@login_required
 def expenses():
     form = ExpenseForm()
     if form.validate_on_submit():
@@ -126,6 +136,7 @@ def expenses():
     return render_template('expenses.html', form=form, expenses=all_expenses, total=total_expense)
 
 @app.route('/issues', methods=['GET', 'POST'])
+@login_required
 def issues():
     form = IssueForm()
     if form.validate_on_submit():
