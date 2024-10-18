@@ -26,7 +26,7 @@ def create_tables():
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('Home.html')
 
 # Student Login
 @app.route('/student_login')
