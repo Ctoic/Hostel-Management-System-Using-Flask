@@ -86,27 +86,6 @@ This is a Flask-based web application for managing a hostel. It includes functio
 -   `/rooms`: List of all rooms and their assigned students.
 -   `/expenses`: Form to add expenses and view total monthly expenses.
 
-## Screenshots
-
-### Home Page
-
-![Home Page](static/screenshots/home.png)
-
-### Enroll Student
-
-![Enroll Student](static/screenshots/enroll.png)
-
-### Students List
-
-![Students List](static/screenshots/students.png)
-
-### Rooms List
-
-![Rooms List](static/screenshots/rooms.png)
-
-### Expenses
-
-![Expenses](static/screenshots/expenses.png)
 
 ## License
 
