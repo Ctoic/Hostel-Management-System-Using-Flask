@@ -30,6 +30,7 @@ class Issue(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
 class Admin(db.Model, UserMixin):
+    __tablename__ = 'admin'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)  # Retain username from the add-admin-login branch
     name = db.Column(db.String(100), nullable=False)  # Retain name from the master branch
