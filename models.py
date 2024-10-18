@@ -28,8 +28,11 @@ class Issue(db.Model):
     description = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
+    
 class Admin(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    username = db.Column(db.String(100), unique=True, nullable=False)  # Retain username from the add-admin-login branch
+    name = db.Column(db.String(100), nullable=False)  # Retain name from the master branch
+    email = db.Column(db.String(100), unique=True, nullable=False)  # Retain email from the master branch
+    password_hash = db.Column(db.String(128), nullable=False)  # Use password_hash from add-admin-login
+
