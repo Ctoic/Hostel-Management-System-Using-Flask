@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired, NumberRange
-from wtforms import StringField, FloatField, SubmitField, FileField , IntegerField, DateField  # DateField imported
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, NumberRange, Email, Length, Regexp
+from wtforms import StringField, FloatField, SubmitField, FileField , IntegerField, DateField, PasswordField  # DateField imported
 from flask_wtf.file import FileRequired, FileAllowed
 
 
@@ -23,3 +22,13 @@ class IssueForm(FlaskForm):
     description = StringField('Description', validators=[DataRequired()])
     status = StringField('Status', validators=[DataRequired()])
     submit = SubmitField('Add Issue')
+
+class AdminRegisterForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[
+        DataRequired(),
+        Length(min=8, message='Password must be at least 8 characters long'),
+        Regexp('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$', message='Password must contain at least one letter and one number')
+    ])
+    submit = SubmitField('Register')
