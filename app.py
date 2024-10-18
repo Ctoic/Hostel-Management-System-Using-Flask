@@ -2,16 +2,23 @@ import os
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, flash, request
 from models import db, Student, Room, Expense, Issue, Admin
-from forms import EnrollForm, ExpenseForm, IssueForm, AdminRegisterForm
-from flask_migrate import Migrate
-from werkzeug.security import generate_password_hash
 
+from forms import EnrollForm, ExpenseForm, IssueForm, AdminLoginForm,AdminRegisterForm
+from flask_migrate import Migrate
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_secret_key')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hostel.db'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 minutes
+
 db.init_app(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'admin_login'
 
 # After initializing db
 migrate = Migrate(app, db)
@@ -24,6 +31,10 @@ def create_tables():
             db.session.add(room)
     db.session.commit()
 
+@login_manager.user_loader
+def load_user(user_id):
+    return Admin.query.get(int(user_id))
+
 @app.route('/')
 def home():
     return render_template('Home.html')
@@ -34,12 +45,21 @@ def student_login():
     return render_template('student_login.html')
 
 # Admin Login
-@app.route('/admin_login')
+@app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
-    return render_template('admin_login.html')
+    form = AdminLoginForm()
+    if form.validate_on_submit():
+        admin = Admin.query.filter_by(username=form.username.data).first()
+        if admin and bcrypt.check_password_hash(admin.password_hash, form.password.data):
+            login_user(admin)
+            return redirect(url_for('room_management'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('admin_login.html', form=form)
 
 # Room Management (Admin Only)
 @app.route('/room_management')
+@login_required
 def room_management():
     return render_template('room_management.html')
 

@@ -23,6 +23,10 @@ class IssueForm(FlaskForm):
     status = StringField('Status', validators=[DataRequired()])
     submit = SubmitField('Add Issue')
 
+class AdminLoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
 class AdminRegisterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -32,3 +36,4 @@ class AdminRegisterForm(FlaskForm):
         Regexp('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$', message='Password must contain at least one letter and one number')
     ])
     submit = SubmitField('Register')
+
