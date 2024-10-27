@@ -14,16 +14,32 @@
                     {{ form.name(class="form-control") }}
                 </div>
                 <div class="mb-3">
-                    {{ form.fee.label(class="form-label") }}
-                    {{ form.fee(class="form-control") }}
+                    {{ form.student_id.label(class="form-label") }}
+                    {{ form.student_id(class="form-control") }}
                 </div>
                 <div class="mb-3">
-                    {{ form.picture.label(class="form-label") }}
-                    {{ form.picture(class="form-control") }}
+                    {{ form.age.label(class="form-label") }}
+                    {{ form.age(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.contact_number.label(class="form-label") }}
+                    {{ form.contact_number(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.address.label(class="form-label") }}
+                    {{ form.address(class="form-control") }}
                 </div>
                 <div class="mb-3">
                     {{ form.room_number.label(class="form-label") }}
                     {{ form.room_number(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.admission_date.label(class="form-label") }}
+                    {{ form.admission_date(class="form-control") }}
                 </div>
                 <div class="d-flex justify-content-center">
                     {{ form.submit(class="btn btn-primary") }}

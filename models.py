@@ -15,6 +15,12 @@ class Student(db.Model):
     fee = db.Column(db.Float, nullable=False, server_default='0')
     picture = db.Column(db.String(100), nullable=True)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
+    student_id = db.Column(db.String(100), nullable=False, unique=True)
+    age = db.Column(db.Integer, nullable=False)
+    contact_number = db.Column(db.String(15), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    address = db.Column(db.String(200), nullable=False)
+    admission_date = db.Column(db.Date, nullable=False)
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,4 +42,3 @@ class Admin(db.Model, UserMixin):
     name = db.Column(db.String(100), nullable=False)  # Retain name from the master branch
     email = db.Column(db.String(100), unique=True, nullable=False)  # Retain email from the master branch
     password_hash = db.Column(db.String(128), nullable=False)  # Use password_hash from add-admin-login
-

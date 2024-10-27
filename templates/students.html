@@ -7,22 +7,36 @@
 <div class="d-flex justify-content-center">
     <div class="card w-75">
         <div class="card-body">
+            <form method="GET" action="{{ url_for('students') }}">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="search" placeholder="Search by name or student ID" value="{{ request.args.get('search', '') }}">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </form>
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Student ID</th>
+                        <th>Age</th>
+                        <th>Contact Number</th>
+                        <th>Email</th>
+                        <th>Address</th>
                         <th>Room</th>
-                        <th>Fee</th>
-                        <th>Picture</th>
+                        <th>Admission Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for student in students %}
                     <tr>
                         <td>{{ student.name }}</td>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.age }}</td>
+                        <td>{{ student.contact_number }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.address }}</td>
                         <td>{{ student.room.room_number }}</td>
-                        <td>{{ student.fee }}</td>
-                        <td><img src="{{ url_for('static', filename='uploads/' ~ student.picture) }}" alt="Student Picture" width="100"></td>
+                        <td>{{ student.admission_date }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

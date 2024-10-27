@@ -2,8 +2,7 @@ import os
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, flash, request
 from models import db, Student, Room, Expense, Issue, Admin
-
-from forms import EnrollForm, ExpenseForm, IssueForm, AdminLoginForm,AdminRegisterForm
+from forms import EnrollForm, ExpenseForm, IssueForm, AdminLoginForm, AdminRegisterForm, StudentForm
 from flask_migrate import Migrate
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
@@ -72,7 +71,23 @@ def room_management():
 @app.route('/enroll', methods=['GET', 'POST'])
 @login_required
 def enroll():
-    return render_template('enroll.html')
+    form = StudentForm()
+    if form.validate_on_submit():
+        student = Student(
+            name=form.name.data,
+            student_id=form.student_id.data,
+            age=form.age.data,
+            contact_number=form.contact_number.data,
+            email=form.email.data,
+            address=form.address.data,
+            room_id=form.room_number.data,
+            admission_date=form.admission_date.data
+        )
+        db.session.add(student)
+        db.session.commit()
+        flash('Student enrolled successfully', 'success')
+        return redirect(url_for('students'))
+    return render_template('enroll.html', form=form)
 
 @app.route('/expenses', methods=['GET', 'POST'])
 @login_required
@@ -85,10 +100,14 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/students')
+@app.route('/students', methods=['GET', 'POST'])
 @login_required
 def students():
-    all_students = Student.query.all()
+    search = request.args.get('search')
+    if search:
+        all_students = Student.query.filter(Student.name.contains(search) | Student.student_id.contains(search)).all()
+    else:
+        all_students = Student.query.all()
     return render_template('students.html', students=all_students)
 
 @app.route('/rooms')
