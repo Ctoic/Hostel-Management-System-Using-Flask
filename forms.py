@@ -39,3 +39,13 @@ class AdminRegisterForm(FlaskForm):
     ])
     submit = SubmitField('Register')
 
+class StudentForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    student_id = StringField('Student ID', validators=[DataRequired()])
+    age = IntegerField('Age', validators=[DataRequired(), NumberRange(min=1)])
+    contact_number = StringField('Contact Number', validators=[DataRequired(), Length(min=10, max=15)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    address = StringField('Address', validators=[DataRequired()])
+    room_number = IntegerField('Room Number', validators=[DataRequired(), NumberRange(min=1, max=8)])
+    admission_date = DateField('Admission Date', validators=[DataRequired()])
+    submit = SubmitField('Submit')
