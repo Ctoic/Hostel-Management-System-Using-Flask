@@ -12,7 +12,7 @@ class Room(db.Model):
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    fee = db.Column(db.Float, nullable=False)
+    fee = db.Column(db.Float, nullable=False, server_default='0')
     picture = db.Column(db.String(100), nullable=True)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
 

@@ -6,7 +6,6 @@ from models import db, Student, Room, Expense, Issue, Admin
 from forms import EnrollForm, ExpenseForm, IssueForm, AdminLoginForm,AdminRegisterForm
 from flask_migrate import Migrate
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
@@ -69,6 +68,17 @@ def admin_dashboard():
 def room_management():
     return render_template('room_management.html')
 
+
+@app.route('/enroll', methods=['GET', 'POST'])
+@login_required
+def enroll():
+    return render_template('enroll.html')
+
+@app.route('/expenses', methods=['GET', 'POST'])
+@login_required
+def expenses():
+    return render_template('expenses.html')
+
 # Student Registration
 @app.route('/register')
 def register():
@@ -95,8 +105,8 @@ def admin_register():
         if existing_admin:
             flash('Email already in use', 'danger')
         else:
-            hashed_password = generate_password_hash(form.password.data)
-            new_admin = Admin(name=form.name.data, email=form.email.data, password=hashed_password)
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            new_admin = Admin(name=form.name.data, username=form.name.data, email=form.email.data, password_hash=hashed_password)
             try:
                 db.session.add(new_admin)
                 db.session.commit()
