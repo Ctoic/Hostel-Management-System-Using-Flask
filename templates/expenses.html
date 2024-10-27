@@ -28,7 +28,14 @@
         </div>
     </div>
 </div>
-<h2 class="text-center mt-5">Expense List</h2>
+
+<h2 class="text-center mt-5">Expense List - {{ month or "Current Month" }} {{ year or "" }}</h2>
+<div class="text-center">
+    {% for m in range(1, 13) %}
+        <a href="{{ url_for('expenses', year=year , month=m) }}" class="btn btn-secondary mb-3">{{ m }}</a>
+    {% endfor %}
+</div>
+
 <div class="d-flex justify-content-center">
     <div class="card w-75">
         <div class="card-body">
@@ -50,11 +57,8 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <h3 class="text-center">Total Expense: Rs{{ total }}</h3>
-            <h3 class="text-center">Total Remaining: Rs ({{ 183000 - total }})</h3>
-            <h4 class="text-center">Adjsted by C3: Rs({{ total - 183000 }})is donated by our generous donors</h4>
-
-
+            <h3 class="text-center">Total Expense for {{ month or "Current Month" }}: Rs{{ total }}</h3>
+            <h3 class="text-center">Remaining Balance: Rs{{ 183000 - total }}</h3>
         </div>
     </div>
 </div>
