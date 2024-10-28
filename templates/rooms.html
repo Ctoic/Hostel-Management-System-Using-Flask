@@ -1,11 +1,30 @@
 {% extends 'base.html' %}
-<!-- Add style.css-->
-
+{% block title %}Rooms and Students{% endblock %}
 {% block content %}
-<h2 class = "display-1">Rooms and Students</h2>
-<ul class = "list-group">
-    {% for room in rooms %}
-    <li class="list-group-item" >Room {{ room.room_number }} - {{ room.students|length }} / 4 Students</li>
-    {% endfor %}
-</ul>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<div class="container mt-5">
+    <h2 class="display-1 text-center">Rooms and Students</h2>
+    <ul class="list-group mt-4">
+        {% for room in rooms %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>Room {{ room.room_number }} - {{ room.students|length }} / 4 Students</span>
+            {% if room.students|length < 4 %}
+            <button class="btn btn-primary btn-sm" onclick="registerStudent({{ room.room_number }})">Register Student</button>
+            {% else %}
+            <span class="badge bg-danger">Full</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+function registerStudent(roomNumber) {
+    // Logic to handle student registration
+    // You may need to implement an AJAX request to register a student
+    alert('Registering a student in Room ' + roomNumber);
+    // You can redirect to a registration page or show a modal here
+}
+</script>
 {% endblock %}
