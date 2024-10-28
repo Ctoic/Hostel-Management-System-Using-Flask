@@ -138,8 +138,10 @@ def enroll():
 @app.route('/expenses/<int:year>/<int:month>', methods=['GET', 'POST'])
 def expenses(year=None, month=None):
     form = ExpenseForm()
-    
-    # Add new expense if form is submitted
+    current_year = datetime.today().year
+    current_month = datetime.today().month
+
+    # Adding new expense if form is submitted
     if form.validate_on_submit():
         new_expense = Expense(
             item_name=form.item_name.data,
@@ -150,26 +152,23 @@ def expenses(year=None, month=None):
         db.session.commit()
         flash('Expense added successfully!', 'success')
         return redirect(url_for('expenses'))
-    
-    # If year and month are provided, filter expenses for that month
-    if year and month:
-        expenses = Expense.query.filter(
-            db.extract('year', Expense.date) == year,
-            db.extract('month', Expense.date) == month
-        ).all()
-    else:
-        # Default to current month if no year/month is provided
-        today = datetime.today()
-        expenses = Expense.query.filter(
-            db.extract('year', Expense.date) == today.year,
-            db.extract('month', Expense.date) == today.month
-        ).all()
-    
-    # Calculate total expenses for the selected month
+
+    # Set year and month to current if not provided
+    if not year or not month:
+        year = current_year
+        month = current_month
+
+    # Filter expenses by selected month and year
+    expenses = Expense.query.filter(
+        db.extract('year', Expense.date) == year,
+        db.extract('month', Expense.date) == month
+    ).all()
+
+    # Calculate total expenses for the month
     total = sum(expense.price for expense in expenses)
-    
-    return render_template('expenses.html', form=form, expenses=expenses, total=total, year=year, month=month)
-@app.route('/register')
+
+    return render_template('expenses.html', form=form, expenses=expenses, total=total, year=year, month=month, current_year=current_year)
+# @app.route('/register')
 def register():
     return render_template('register.html')
 
