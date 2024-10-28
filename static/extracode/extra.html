@@ -1,4 +1,92 @@
-{% extends 'base.html' %}
+@app.route('/expenses', methods=['GET', 'POST'])
+@app.route('/expenses/<int:year>/<int:month>', methods=['GET', 'POST'])
+def expenses(year=None, month=None):
+    form = ExpenseForm()
+    current_year = datetime.today().year
+    current_month = datetime.today().month
+
+    # Adding new expense if form is submitted
+    if form.validate_on_submit():
+        new_expense = Expense(
+            item_name=form.item_name.data,
+            price=form.price.data,
+            date=form.date.data
+        )
+        db.session.add(new_expense)
+        db.session.commit()
+        flash('Expense added successfully!', 'success')
+        return redirect(url_for('expenses'))
+
+    # Set year and month to current if not provided
+    if not year or not month:
+        year = current_year
+        month = current_month
+
+    # Filter expenses by selected month and year
+    expenses = Expense.query.filter(
+        db.extract('year', Expense.date) == year,
+        db.extract('month', Expense.date) == month
+    ).all()
+
+    # Calculate total expenses for the month
+    total = sum(expense.price for expense in expenses)
+
+    return render_template('expenses.html', form=form, expenses=expenses, total=total, year=year, month=month, current_year=current_year)
+
+# PDF Export Route
+@app.route('/export_pdf/<int:year>/<int:month>', methods=['GET'])
+def export_pdf(year, month):
+    # Get expenses for the specified month and year
+    expenses = Expense.query.filter(
+        db.extract('year', Expense.date) == year,
+        db.extract('month', Expense.date) == month
+    ).all()
+
+    # Calculate total expenses for the month
+    total = sum(expense.price for expense in expenses)
+
+    # Create a BytesIO buffer for the PDF
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    # PDF Title
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(200, height - 50, f"Expense Report - {month}/{year}")
+
+    # Table headers
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, height - 100, "Item Name")
+    pdf.drawString(250, height - 100, "Price (Rs)")
+    pdf.drawString(400, height - 100, "Date")
+
+    # Table content
+    y_position = height - 130
+    pdf.setFont("Helvetica", 10)
+    for expense in expenses:
+        pdf.drawString(50, y_position, expense.item_name)
+        pdf.drawString(250, y_position, f"Rs {expense.price}")
+        pdf.drawString(400, y_position, expense.date.strftime('%Y-%m-%d'))
+        y_position -= 20
+
+        # Add a new page if y_position is too low
+        if y_position < 50:
+            pdf.showPage()
+            y_position = height - 50
+
+    # Total expenses
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y_position - 30, f"Total Expenses for {month}/{year}: Rs {total}")
+
+    pdf.save()
+
+    # Move the buffer's position back to the start
+    buffer.seek(0)
+    
+    # Send the PDF as a file download
+    return send_file(buffer, as_attachment=True, download_name=f"Expense_Report_{month}_{year}.pdf", mimetype='application/pdf')
+
+    {% extends 'base.html' %}
 
 {% block title %}Expenses{% endblock %}
 
@@ -141,24 +229,6 @@
         </div>
     </div>
 </div>
-
-<div class="d-flex justify-content-center mt-4">
-    <h2 class="text-secondary">View Expenses by Month</h2>
-</div>
-
-<div class="d-flex justify-content-center">
-    <ul class="list-group w-50">
-        {% for entry in grouped_expenses %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a href="{{ url_for('expenses', year=entry.year, month=entry.month) }}">
-                {{ entry.month }}/{{ entry.year }}
-            </a>
-            <span>Total: Rs {{ entry.total }}</span>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

@@ -4,19 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Registration</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-5">
         <h1 class="text-center">Admin Registration</h1>
         <div class="d-flex justify-content-center">
-            <div class="card">
+            <div class="card p-4">
                 <div class="card-body">
                     <form method="POST" action="">
                         {{ form.hidden_tag() }}
+                        
                         <div class="mb-3">
                             {{ form.name.label(class="form-label") }}
-                            {{ form.name(class="form-control") }}
+                            {{ form.name(class="form-control" , placeholder="Enter your full name") }}
                             {% if form.name.errors %}
                                 <div class="text-danger">
                                     {% for error in form.name.errors %}
@@ -25,9 +40,10 @@
                                 </div>
                             {% endif %}
                         </div>
+                        
                         <div class="mb-3">
                             {{ form.email.label(class="form-label") }}
-                            {{ form.email(class="form-control") }}
+                            {{ form.email(class="form-control" , placeholder="Enter your email address") }}
                             {% if form.email.errors %}
                                 <div class="text-danger">
                                     {% for error in form.email.errors %}
@@ -36,9 +52,10 @@
                                 </div>
                             {% endif %}
                         </div>
+                        
                         <div class="mb-3">
                             {{ form.password.label(class="form-label") }}
-                            {{ form.password(class="form-control") }}
+                            {{ form.password(class="form-control", placeholder="Create a strong password") }}
                             {% if form.password.errors %}
                                 <div class="text-danger">
                                     {% for error in form.password.errors %}
@@ -47,14 +64,18 @@
                                 </div>
                             {% endif %}
                         </div>
+
                         <div class="d-flex justify-content-center">
-                            {{ form.submit(class="btn btn-primary") }}
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
                         </div>
                     </form>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('admin_login') }}" class="text-primary">Already have an account? Login here.</a>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

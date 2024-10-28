@@ -139,13 +139,12 @@ def enroll():
 #     return render_template('expenses.html', form=form, expenses=expenses, total=total)
 
 @app.route('/expenses', methods=['GET', 'POST'])
-@app.route('/expenses/<int:year>/<int:month>', methods=['GET', 'POST'])
-def expenses(year=None, month=None):
+def expenses():
     form = ExpenseForm()
     current_year = datetime.today().year
     current_month = datetime.today().month
 
-    # Adding new expense if form is submitted
+    # Adding a new expense if the form is submitted
     if form.validate_on_submit():
         new_expense = Expense(
             item_name=form.item_name.data,
@@ -157,23 +156,25 @@ def expenses(year=None, month=None):
         flash('Expense added successfully!', 'success')
         return redirect(url_for('expenses'))
 
-    # Set year and month to current if not provided
-    if not year or not month:
-        year = current_year
-        month = current_month
+    # Group expenses by month and year
+    grouped_expenses = db.session.query(
+        db.extract('year', Expense.date).label('year'),
+        db.extract('month', Expense.date).label('month'),
+        db.func.sum(Expense.price).label('total')
+    ).group_by('year', 'month').order_by('year', 'month').all()
 
-    # Filter expenses by selected month and year
+    # Retrieve expenses for a specific month if selected
+    year = request.args.get('year', current_year, type=int)
+    month = request.args.get('month', current_month, type=int)
     expenses = Expense.query.filter(
         db.extract('year', Expense.date) == year,
         db.extract('month', Expense.date) == month
     ).all()
-
-    # Calculate total expenses for the month
     total = sum(expense.price for expense in expenses)
 
-    return render_template('expenses.html', form=form, expenses=expenses, total=total, year=year, month=month, current_year=current_year)
-
-# PDF Export Route
+    return render_template('expenses.html', form=form, expenses=expenses, total=total,
+                           grouped_expenses=grouped_expenses, year=year, month=month,
+                           current_year=current_year, current_month=current_month)
 @app.route('/export_pdf/<int:year>/<int:month>', methods=['GET'])
 def export_pdf(year, month):
     # Get expenses for the specified month and year
