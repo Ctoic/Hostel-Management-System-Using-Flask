@@ -1,12 +1,13 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #1a1a1a; /* Dark background */
+    color: white; /* Set default text color to white */
     margin: 0;
     padding: 0;
 }
 
-h1, h2 {
-    color: #333;
+h1, h2, h3, h4, h5, h6 {
+    color: #e0e0e0; /* Lighter color for headings */
 }
 
 header {
@@ -15,14 +16,15 @@ header {
     padding: 10px 0;
     text-align: center;
 }
+
 .carousel {
     margin: 20px auto;
-    max-width: 800px; /* Limit the width of the carousel */
+    max-width: 800px;
 }
 
 .carousel img {
     height: 400px;
-    object-fit: cover; /* Ensures the images cover the space evenly */
+    object-fit: cover;
 }
 
 .nav-bar {
@@ -44,7 +46,7 @@ header {
 }
 
 .nav-bar ul li a {
-    color: white;
+    color: white; /* White links */
     text-decoration: none;
     font-weight: bold;
 }
@@ -77,6 +79,7 @@ header {
 .facilities ul {
     list-style-type: square;
     padding-left: 20px;
+    color: #070000; /* Lighter color for list items */
 }
 
 /* Footer styling */
@@ -107,7 +110,7 @@ footer {
     margin: 0;
     padding: 0;
     font-size: 16px;
-    color: white;
+    color: white; /* Ensure contact info is white */
 }
 
 .interactive-link {

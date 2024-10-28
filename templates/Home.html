@@ -11,26 +11,23 @@
 </head>
 
 <body>
-    <header>
-        <h1>Welcome to the Hostel Management System</h1>
-        
-    </header>
     <!-- Header with Navigation -->
-    <header>
-        <div class="nav-bar">
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('student_login') }}">Student Login</a></li>
-                    <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
-                    <li><a href="{{ url_for('admin_register') }}">Admin Registration</a></li>
-                    <li><a href="#">About Us</a></li>
+    <header class="bg-dark text-white text-center py-3 mb-5">
+        <h1>Welcome to the Hostel Management System</h1>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('student_login') }}">Student Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_login') }}">Admin Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_register') }}">Admin Registration</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
                 </ul>
-            </nav>
-        </div>
+            </div>
+        </nav>
     </header>
 
     <!-- Scrolling Hostel Images (Carousel) -->
-    <div id="hostelCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div id="hostelCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#hostelCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
             <button type="button" data-bs-target="#hostelCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -57,75 +54,84 @@
         </button>
     </div>
 
-    <!-- Rest of your page content -->
-</body>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Management System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    
-
     <!-- Main Section -->
-    <div class="container">
-        <section class="intro">
-            <h2>Welcome to Our Hostel</h2>
-            <p>We provide top-notch facilities to ensure a comfortable and secure stay for all students.</p>
+    <div class="container mb-5">
+        <section class="intro text-center">
+            <h2 class="mb-4">Welcome to Our Hostel</h2>
+            <p class="lead">We provide top-notch facilities to ensure a comfortable and secure stay for all students. We are a non-profit organization facilitating low-income students from across Pakistan.</p>
         </section>
 
         <!-- Photo Gallery -->
-        <section class="gallery">
-            <h2>Our Hostel</h2>
-            <div class="photo-gallery">
-                <img src="{{ url_for('static', filename='images/hostel_image1.jpg') }}" alt="Hostel Image 1">
-                <img src="{{ url_for('static', filename='images/hostel_image2.jpg') }}" alt="Hostel Image 2">
-                <img src="{{ url_for('static', filename='images/hostel_image3.jpg') }}" alt="Hostel Image 3">
-                <img src="{{ url_for('static', filename='images/hostel_image4.jpg') }}" alt="Hostel Image 4">
+        <section class="gallery my-5">
+            <h2 class="text-center mb-4">Our Hostel</h2>
+            <div class="row g-4">
+                <div class="col-md-3"><img src="{{ url_for('static', filename='images/hostel_image1.jpg') }}" class="img-fluid rounded shadow" alt="Hostel Image 1"></div>
+                <div class="col-md-3"><img src="{{ url_for('static', filename='images/hostel_image2.jpg') }}" class="img-fluid rounded shadow" alt="Hostel Image 2"></div>
+                <div class="col-md-3"><img src="{{ url_for('static', filename='images/hostel_image3.jpg') }}" class="img-fluid rounded shadow" alt="Hostel Image 3"></div>
+                <div class="col-md-3"><img src="{{ url_for('static', filename='images/hostel_image4.jpg') }}" class="img-fluid rounded shadow" alt="Hostel Image 4"></div>
             </div>
         </section>
 
         <!-- Facilities Section -->
-        <section class="facilities">
-            <h2>Facilities Provided</h2>
-            <ul>
-                <li>24/7 Security with CCTV Surveillance</li>
-                <li>Wi-Fi Internet Connectivity</li>
-                <li>Clean and Hygienic Rooms</li>
-                <li>Recreational Area with Sports and Gym</li>
-                <li>Mess Facility with Nutritious Meals</li>
-                <li>Medical Assistance</li>
-            </ul>
+        <section class="facilities my-5">
+            <h2 class="text-center mb-4">Facilities Provided</h2>
+            <div class="row text-center">
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">24/7 Security</h5>
+                            <p class="card-text">CCTV Surveillance and security staff.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">Wi-Fi Connectivity</h5>
+                            <p class="card-text">High-speed internet access throughout the hostel.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">Clean and Hygienic Rooms</h5>
+                            <p class="card-text">Well-maintained and sanitized rooms.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">Mess Facility</h5>
+                            <p class="card-text">Nutritious meals served daily.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">Medical Assistance</h5>
+                            <p class="card-text">On-site first aid and medical assistance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
 
-    <!-- Footer with Interactive Elements -->
-    <footer>
-        <div class="footer-content">
-            <!-- Contact Information in One Line -->
-            <div class="contact-info">
-                <p>Address:House 24 ,Street 586, G13/2</p>
-                <p>Phone: <a href="tel:+918695241237" class="interactive-link">+914562127894</a></p>
-                <p>Email: <a href="mailto:contact@hostelmanagement.com" class="interactive-link">contact@c3.com</a></p>
-            </div>
-
-            <!-- Social Media Icons -->
-            <div class="social-icons">
-                <a href="https://www.facebook.com" target="_blank" class="social-icon">
-                    <img src="{{ url_for('static', filename='images/facebook-icon.png') }}" alt="Facebook">
-                </a>
-                <a href="https://www.twitter.com" target="_blank" class="social-icon">
-                    <img src="{{ url_for('static', filename='images/twitter-icon.png') }}" alt="Twitter">
-                </a>
-                <a href="https://www.instagram.com" target="_blank" class="social-icon">
-                    <img src="{{ url_for('static', filename='images/instagram-icon.png') }}" alt="Instagram">
-                </a>
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>Address: House 24, Street 586, G13/2, Islamabad</p>
+            <p>Phone: <a href="tel:+918695241237" class="text-decoration-none text-light">+914562127894</a></p>
+            <p>Email: <a href="mailto:contact@hostelmanagement.com" class="text-decoration-none text-light">contact@c3.com</a></p>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="https://www.facebook.com" target="_blank" class="me-3"><img src="{{ url_for('static', filename='images/facebook-icon.png') }}" alt="Facebook" width="30"></a>
+                <a href="https://www.twitter.com" target="_blank" class="me-3"><img src="{{ url_for('static', filename='images/twitter-icon.png') }}" alt="Twitter" width="30"></a>
+                <a href="https://www.instagram.com" target="_blank"><img src="{{ url_for('static', filename='images/instagram-icon.png') }}" alt="Instagram" width="30"></a>
             </div>
         </div>
     </footer>
 </body>
-
 </html>
-
-
