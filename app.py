@@ -2,13 +2,17 @@ import os
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, flash, request
 from models import db, Student, Room, Expense, Issue, Admin
-
 from datetime import datetime
-
 from forms import EnrollForm, ExpenseForm, IssueForm, AdminLoginForm,AdminRegisterForm
 from flask_migrate import Migrate
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
+from flask import send_file
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_secret_key')
@@ -168,6 +172,59 @@ def expenses(year=None, month=None):
     total = sum(expense.price for expense in expenses)
 
     return render_template('expenses.html', form=form, expenses=expenses, total=total, year=year, month=month, current_year=current_year)
+
+# PDF Export Route
+@app.route('/export_pdf/<int:year>/<int:month>', methods=['GET'])
+def export_pdf(year, month):
+    # Get expenses for the specified month and year
+    expenses = Expense.query.filter(
+        db.extract('year', Expense.date) == year,
+        db.extract('month', Expense.date) == month
+    ).all()
+
+    # Calculate total expenses for the month
+    total = sum(expense.price for expense in expenses)
+
+    # Create a BytesIO buffer for the PDF
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    # PDF Title
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(200, height - 50, f"Expense Report - {month}/{year}")
+
+    # Table headers
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, height - 100, "Item Name")
+    pdf.drawString(250, height - 100, "Price (Rs)")
+    pdf.drawString(400, height - 100, "Date")
+
+    # Table content
+    y_position = height - 130
+    pdf.setFont("Helvetica", 10)
+    for expense in expenses:
+        pdf.drawString(50, y_position, expense.item_name)
+        pdf.drawString(250, y_position, f"Rs {expense.price}")
+        pdf.drawString(400, y_position, expense.date.strftime('%Y-%m-%d'))
+        y_position -= 20
+
+        # Add a new page if y_position is too low
+        if y_position < 50:
+            pdf.showPage()
+            y_position = height - 50
+
+    # Total expenses
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y_position - 30, f"Total Expenses for {month}/{year}: Rs {total}")
+
+    pdf.save()
+
+    # Move the buffer's position back to the start
+    buffer.seek(0)
+    
+    # Send the PDF as a file download
+    return send_file(buffer, as_attachment=True, download_name=f"Expense_Report_{month}_{year}.pdf", mimetype='application/pdf')
 # @app.route('/register')
 def register():
     return render_template('register.html')

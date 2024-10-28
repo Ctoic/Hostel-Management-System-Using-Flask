@@ -3,6 +3,14 @@
 {% block title %}Expenses{% endblock %}
 
 {% block content %}
+<!-- Export to PDF Button -->
+<div class="d-flex justify-content-center mb-3">
+    <a href="{{ url_for('export_pdf', year=year or current_year, month=month or current_month) }}" 
+       class="btn btn-danger">
+        Export to PDF
+    </a>
+</div>
+
 <div class="d-flex justify-content-center">
     <div class="card">
         <div class="card-body">
