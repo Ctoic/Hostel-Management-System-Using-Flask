@@ -1,30 +1,65 @@
 {% extends 'base.html' %}
-
-{% block title %}Expenses{% endblock %}
+{% block title %}Enroll Student{% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h2>Enroll Student</h2>
-        <form method="POST" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
-            <div class="mb-3">
-                {{ form.name.label(class="form-label") }}
-                {{ form.name(class="form-control") }}
+<div class="container mt-5">
+    <h2 class="display-4 text-center mb-4">Enroll Student</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-4">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            <div class="invalid-feedback">
+                Please enter the student's name.
             </div>
-            <div class="mb-3">
-                {{ form.fee.label(class="form-label") }}
-                {{ form.fee(class="form-control") }}
+        </div>
+        
+        <div class="mb-4">
+            {{ form.fee.label(class="form-label") }}
+            {{ form.fee(class="form-control") }}
+            <div class="invalid-feedback">
+                Please enter the fee amount.
             </div>
-            <div class="mb-3">
-                {{ form.room_number.label(class="form-label") }}
-                {{ form.room_number(class="form-control") }}
+        </div>
+        
+        <div class="mb-4">
+            {{ form.room_number.label(class="form-label") }}
+            {{ form.room_number(class="form-control") }}
+            <div class="invalid-feedback">
+                Please select a room number.
             </div>
-            <div class="mb-3">
-                {{ form.picture.label(class="form-label") }}
-                {{ form.picture(class="form-control") }}
-            </div>
-            <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
-        </form>
-    </div>
-{% endblock %}
+        </div>
 
+        <div class="mb-4">
+            {{ form.picture.label(class="form-label") }}
+            {{ form.picture(class="form-control") }}
+            <div class="invalid-feedback">
+                Please upload a picture of the student.
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary btn-lg">{{ form.submit.label.text }}</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Example of adding Bootstrap validation for the form
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+{% endblock %}
