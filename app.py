@@ -225,6 +225,28 @@ def export_pdf(year, month):
     
     # Send the PDF as a file download
     return send_file(buffer, as_attachment=True, download_name=f"Expense_Report_{month}_{year}.pdf", mimetype='application/pdf')
+
+# Edit expense route
+@app.route('/edit_expense/<int:expense_id>', methods=['POST'])
+def edit_expense(expense_id):
+    expense = Expense.query.get_or_404(expense_id)
+    expense.item_name = request.form['item_name']
+    expense.price = float(request.form['price'])
+    expense.date = request.form['date']
+    
+    db.session.commit()
+    flash('Expense updated successfully!', 'success')
+    return redirect(url_for('expenses', year=expense.date.year, month=expense.date.month))
+
+# Delete expense route
+@app.route('/delete_expense/<int:expense_id>', methods=['POST'])
+def delete_expense(expense_id):
+    expense = Expense.query.get_or_404(expense_id)
+    db.session.delete(expense)
+    db.session.commit()
+    flash('Expense deleted successfully!', 'success')
+    return redirect(url_for('expenses'))
+
 # @app.route('/register')
 def register():
     return render_template('register.html')
