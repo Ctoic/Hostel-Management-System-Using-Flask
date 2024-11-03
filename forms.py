@@ -4,6 +4,14 @@ from wtforms import StringField, FloatField, SubmitField, FileField , IntegerFie
 from flask_wtf.file import FileRequired, FileAllowed
 
 
+# forms.py
+class FeeCollectionForm(FlaskForm):
+    student_id = IntegerField('Student ID', validators=[DataRequired()])
+    amount = FloatField('Amount', validators=[DataRequired(), NumberRange(min=0)])
+    submit = SubmitField('Add Payment')
+
+
+
 class EnrollForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     fee = FloatField('Fee', validators=[DataRequired(), NumberRange(min=0)])

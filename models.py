@@ -1,8 +1,24 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime  # Added to use datetime for the date column
 from flask_login import UserMixin
+from datetime import datetime
 
 db = SQLAlchemy()
+
+# models.py
+
+
+class FeeRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    date_paid = db.Column(db.Date, default=datetime.utcnow)
+
+    student = db.relationship('Student', back_populates='fee_records')
+
+# Update Student model to include the relationship
+    # existing fields...
+
 
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,6 +31,8 @@ class Student(db.Model):
     fee = db.Column(db.Float, nullable=False, server_default='0')
     picture = db.Column(db.String(100), nullable=True)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
+    fee_records = db.relationship('FeeRecord', back_populates='student', cascade="all, delete-orphan")
+
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
