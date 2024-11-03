@@ -1,0 +1,23 @@
+<!-- templates/view_fee_records.html -->
+{% extends 'base.html' %}
+{% block title %}Fee Records{% endblock %}
+{% block content %}
+<h2>Fee Records for {{ student.name }}</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in student.fee_records %}
+        <tr>
+            <td>{{ record.date_paid.strftime('%Y-%m-%d') }}</td>
+            <td>{{ record.amount }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('collect_fee') }}" class="btn btn-primary">Collect New Payment</a>
+{% endblock %}
