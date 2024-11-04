@@ -386,6 +386,12 @@ def view_fee_records(student_id):
     student = Student.query.get_or_404(student_id)
     return render_template('view_fee_records.html', student=student)
 
+@app.route('/all_fee_records')
+@login_required
+def view_all_fee_records():
+    fee_records = FeeRecord.query.join(Student).all()
+    return render_template('view_all_fee_records.html', fee_records=fee_records)
+
 
 if __name__ == '__main__':
     app.run(debug=True,port=5051)
