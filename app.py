@@ -258,6 +258,8 @@ def export_pdf(year, month):
     pdf.drawString(50, height - 120, f"Total Expenses: Rs {total_expenses}")
     if total_expenses > INCOME:
         pdf.drawString(50, height - 140, f"Additional Amount by Donors: Rs {total_expenses - INCOME}")
+    
+
 
     # Table headers
     y_position = height - 180
