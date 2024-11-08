@@ -1,0 +1,28 @@
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    color:black;
+    background-color: steelblue;
+}
+.btn-primary, .btn-danger {
+    transition: transform 0.2s ease-in-out;
+}
+.btn-primary:hover, .btn-danger:hover {
+    transform: scale(1.05);
+}
+.table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+.btn-warning {
+    color: #fff;
+}
+
+/* Set the form font color to black */
+.card-body, .card-title, .form-label, input {
+    color: black !important;
+}
+.card p-4 {
+    background-color : black;
+
+}
