@@ -21,10 +21,8 @@
 
 <script>
 function registerStudent(roomNumber) {
-    // Logic to handle student registration
-    // You may need to implement an AJAX request to register a student
-    alert('Registering a student in Room ' + roomNumber);
-    // You can redirect to a registration page or show a modal here
+    // Redirect to the enroll.html form with the room number as a URL parameter
+    window.location.href = "{{ url_for('enroll') }}?room_number=" + roomNumber;
 }
 </script>
 {% endblock %}
