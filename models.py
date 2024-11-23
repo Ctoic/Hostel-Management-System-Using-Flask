@@ -1,7 +1,24 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime  # Added to use datetime for the date column
+from flask_login import UserMixin
+from datetime import datetime
 
 db = SQLAlchemy()
+
+# models.py
+
+
+class FeeRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    date_paid = db.Column(db.Date, default=datetime.utcnow)
+
+    student = db.relationship('Student', back_populates='fee_records')
+
+# Update Student model to include the relationship
+    # existing fields...
+
 
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,9 +28,11 @@ class Room(db.Model):
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    fee = db.Column(db.Float, nullable=False)
+    fee = db.Column(db.Float, nullable=False, server_default='0')
     picture = db.Column(db.String(100), nullable=True)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
+    fee_records = db.relationship('FeeRecord', back_populates='student', cascade="all, delete-orphan")
+
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,3 +46,12 @@ class Issue(db.Model):
     description = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+class Admin(db.Model, UserMixin):
+    __tablename__ = 'admin'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)  # Retain username from the add-admin-login branch
+    name = db.Column(db.String(100), nullable=False)  # Retain name from the master branch
+    email = db.Column(db.String(100), unique=True, nullable=False)  # Retain email from the master branch
+    password_hash = db.Column(db.String(128), nullable=False)  # Use password_hash from add-admin-login
+

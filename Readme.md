@@ -12,50 +12,61 @@ This is a Flask-based web application for managing a hostel. It includes functio
 
 ## Technologies Used
 
-- Python
-- Flask
-- SQLAlchemy
-- Flask-WTF
-- Bootstrap
-- SQLite
+- [Python](https://www.python.org/)
+- [Flask](https://flask.palletsprojects.com/en/3.0.x/)
+- [SQLAlchemy](https://www.sqlalchemy.org/)
+- [Flask-WTF](https://flask-wtf.readthedocs.io/en/1.2.x/)
+- [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+- [SQLite](https://www.sqlite.org/)
+- [Pipenv](https://pipenv.pypa.io/en/latest/)
+
+## Recommended Dev Tools
+
+- [VS Code](https://code.visualstudio.com/download)
+- [Black Formatter](https://code.visualstudio.com/docs/python/formatting)
 
 ## Setup and Installation
 
 1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/yourusername/hostel-management-system.git
-    cd hostel-management-system
-    ```
+   ```bash
+   git clone https://github.com/yourusername/Hostel-Management-System-Using-Flask.git
+   cd Hostel-Management-System-Using-Flask
+   ```
 
-2. Create a virtual environment and activate it:
+2. Create a virtual environment and activate it (virtual environment directory name is `.venv`):
 
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    ```
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
+   ```
 
-3. Install the dependencies:
+3. Install `pipenv` package manager
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+   ```bash
+   pip install pipenv
+   ```
 
-4. Initialize the database:
+4. Install the dependencies:
 
-    ```bash
-    flask db init
-    flask db migrate -m "Initial migration."
-    flask db upgrade
-    ```
+   ```bash
+   pipenv install
+   ```
 
-5. Run the application:
+5. Initialize the database:
 
-    ```bash
-    flask run
-    ```
+   ```bash
+   flask db init
+   flask db upgrade
+   ```
 
-6. Open your browser and navigate to `http://127.0.0.1:5000`.
+6. Run the application:
+
+   ```bash
+   flask run
+   ```
+
+7. Open your browser and navigate to `http://127.0.0.1:5000`.
 
 ## Application Structure
 
@@ -74,28 +85,6 @@ This is a Flask-based web application for managing a hostel. It includes functio
 - `/rooms`: List of all rooms and their assigned students.
 - `/expenses`: Form to add expenses and view total monthly expenses.
 
-## Screenshots
-
-### Home Page
-
-![Home Page](static/screenshots/home.png)
-
-### Enroll Student
-
-![Enroll Student](static/screenshots/enroll.png)
-
-### Students List
-
-![Students List](static/screenshots/students.png)
-
-### Rooms List
-
-![Rooms List](static/screenshots/rooms.png)
-
-### Expenses
-
-![Expenses](static/screenshots/expenses.png)
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
@@ -107,4 +96,3 @@ Contributions are welcome! Please open an issue or submit a pull request.
 ## Contact
 
 For any questions or suggestions, please contact [najamabass2020@gmail.com](mailto:your-email@example.com).
-
