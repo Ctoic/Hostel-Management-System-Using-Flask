@@ -121,41 +121,40 @@ def enroll():
 
 
 @app.route('/expenses', methods=['GET', 'POST'])
+@app.route('/expenses/<int:year>/<int:month>', methods=['GET', 'POST'])
 @login_required
-def expenses():
+def expenses(year=None, month=None):
     form = ExpenseForm()
-    
-    # Get filter parameters
-    month = request.args.get('month', datetime.now().month, type=int)
-    year = request.args.get('year', datetime.now().year, type=int)
+    current_year = datetime.today().year
+    current_month = datetime.today().month
 
-    # Query expenses with filters
-    expenses = Expense.query.filter(
-        extract('year', Expense.date) == year,
-        extract('month', Expense.date) == month
-    ).order_by(Expense.date.desc()).all()
-
-    # Calculate total
-    total = sum(expense.price for expense in expenses)
-
+    # Adding new expense if form is submitted
     if form.validate_on_submit():
-        expense = Expense(
+        new_expense = Expense(
             item_name=form.item_name.data,
             price=form.price.data,
-            date=form.date.data,
-            user_id=current_user.id
+            date=form.date.data
         )
-        db.session.add(expense)
+        db.session.add(new_expense)
         db.session.commit()
         flash('Expense added successfully!', 'success')
         return redirect(url_for('expenses'))
 
-    return render_template('expenses.html', 
-                         form=form,
-                         expenses=expenses,
-                         total=total,
-                         current_month=month,
-                         current_year=year)
+    # Set year and month to current if not provided
+    if not year or not month:
+        year = current_year
+        month = current_month
+
+    # Filter expenses by selected month and year
+    expenses = Expense.query.filter(
+        db.extract('year', Expense.date) == year,
+        db.extract('month', Expense.date) == month
+    ).all()
+
+    # Calculate total expenses for the month
+    total = sum(expense.price for expense in expenses)
+
+    return render_template('expenses.html', form=form, expenses=expenses, total=total, year=year, month=month, current_year=current_year)
 
 INCOME = 345000
 
