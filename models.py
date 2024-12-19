@@ -53,4 +53,3 @@ class Admin(db.Model, UserMixin):
     name = db.Column(db.String(100), nullable=False)  # Retain name from the master branch
     email = db.Column(db.String(100), unique=True, nullable=False)  # Retain email from the master branch
     password_hash = db.Column(db.String(128), nullable=False)  # Use password_hash from add-admin-login
-
