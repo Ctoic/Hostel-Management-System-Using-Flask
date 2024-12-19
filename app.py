@@ -11,6 +11,8 @@ from flask import send_file
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from calendar import month_name
+from sqlalchemy import extract
 
 
 
@@ -117,118 +119,44 @@ def enroll():
             
     return render_template('enroll.html', form=form)
 
-# @app.route('/expenses', methods=['GET', 'POST'])
-# def expenses():
-#     form = ExpenseForm()
-#     if form.validate_on_submit():
-#         # Save the new expense to the database
-#         new_expense = Expense(
-#             item_name=form.item_name.data,
-#             price=form.price.data,
-#             date=form.date.data
-#         )
-#         db.session.add(new_expense)
-#         db.session.commit()
-#         flash('Expense added successfully!', 'success')
-#         return redirect(url_for('expenses'))
-    
-#     # Retrieve all expenses from the database
-#     expenses = Expense.query.all()
-#     total = sum(expense.price for expense in expenses)
-    
-#     return render_template('expenses.html', form=form, expenses=expenses, total=total)
 
 @app.route('/expenses', methods=['GET', 'POST'])
+@login_required
 def expenses():
     form = ExpenseForm()
-    current_year = datetime.today().year
-    current_month = datetime.today().month
+    
+    # Get filter parameters
+    month = request.args.get('month', datetime.now().month, type=int)
+    year = request.args.get('year', datetime.now().year, type=int)
 
-    # Adding a new expense if the form is submitted
+    # Query expenses with filters
+    expenses = Expense.query.filter(
+        extract('year', Expense.date) == year,
+        extract('month', Expense.date) == month
+    ).order_by(Expense.date.desc()).all()
+
+    # Calculate total
+    total = sum(expense.price for expense in expenses)
+
     if form.validate_on_submit():
-        new_expense = Expense(
+        expense = Expense(
             item_name=form.item_name.data,
             price=form.price.data,
-            date=form.date.data
+            date=form.date.data,
+            user_id=current_user.id
         )
-        db.session.add(new_expense)
+        db.session.add(expense)
         db.session.commit()
         flash('Expense added successfully!', 'success')
         return redirect(url_for('expenses'))
 
-    # Group expenses by month and year
-    grouped_expenses = db.session.query(
-        db.extract('year', Expense.date).label('year'),
-        db.extract('month', Expense.date).label('month'),
-        db.func.sum(Expense.price).label('total')
-    ).group_by('year', 'month').order_by('year', 'month').all()
+    return render_template('expenses.html', 
+                         form=form,
+                         expenses=expenses,
+                         total=total,
+                         current_month=month,
+                         current_year=year)
 
-    # Retrieve expenses for a specific month if selected
-    year = request.args.get('year', current_year, type=int)
-    month = request.args.get('month', current_month, type=int)
-    expenses = Expense.query.filter(
-        db.extract('year', Expense.date) == year,
-        db.extract('month', Expense.date) == month
-    ).all()
-    total = sum(expense.price for expense in expenses)
-
-    return render_template('expenses.html', form=form, expenses=expenses, total=total,
-                           grouped_expenses=grouped_expenses, year=year, month=month,
-                           current_year=current_year, current_month=current_month)
-# @app.route('/export_pdf/<int:year>/<int:month>', methods=['GET'])
-# def export_pdf(year, month):
-#     # Get expenses for the specified month and year
-#     expenses = Expense.query.filter(
-#         db.extract('year', Expense.date) == year,
-#         db.extract('month', Expense.date) == month
-#     ).all()
-
-#     # Calculate total expenses for the month
-#     total = sum(expense.price for expense in expenses)
-
-#     # Create a BytesIO buffer for the PDF
-#     buffer = BytesIO()
-#     pdf = canvas.Canvas(buffer, pagesize=A4)
-#     width, height = A4
-
-#     # PDF Title
-#     pdf.setFont("Helvetica-Bold", 16)
-#     pdf.drawString(200, height - 50, f"Expense Report - {month}/{year}")
-
-#     # Table headers
-#     pdf.setFont("Helvetica-Bold", 12)
-#     pdf.drawString(50, height - 100, "Item Name")
-#     pdf.drawString(250, height - 100, "Price (Rs)")
-#     pdf.drawString(400, height - 100, "Date")
-
-#     # Table content
-#     y_position = height - 130
-#     pdf.setFont("Helvetica", 10)
-#     for expense in expenses:
-#         pdf.drawString(50, y_position, expense.item_name)
-#         pdf.drawString(250, y_position, f"Rs {expense.price}")
-#         pdf.drawString(400, y_position, expense.date.strftime('%Y-%m-%d'))
-#         y_position -= 20
-
-#         # Add a new page if y_position is too low
-#         if y_position < 50:
-#             pdf.showPage()
-#             y_position = height - 50
-
-#     # Total expenses
-#     pdf.setFont("Helvetica-Bold", 12)
-#     pdf.drawString(50, y_position - 30, f"Total Expenses for {month}/{year}: Rs {total}")
-
-#     pdf.save()
-
-#     # Move the buffer's position back to the start
-#     buffer.seek(0)
-    
-#     # Send the PDF as a file download
-#     return send_file(buffer, as_attachment=True, download_name=f"Expense_Report_{month}_{year}.pdf", mimetype='application/pdf')
-
-
-# Constants
 INCOME = 345000
 
 @app.route('/export_pdf/<int:year>/<int:month>', methods=['GET'])
@@ -394,6 +322,9 @@ def view_all_fee_records():
     fee_records = FeeRecord.query.join(Student).all()
     return render_template('view_all_fee_records.html', fee_records=fee_records)
 
+@app.template_filter('month_name')
+def month_name_filter(month_number):
+    return month_name[month_number]
 
 if __name__ == '__main__':
     app.run(debug=True,port=5051)

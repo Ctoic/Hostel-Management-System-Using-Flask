@@ -13,7 +13,6 @@ class FeeRecord(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     date_paid = db.Column(db.Date, default=datetime.utcnow)
-
     student = db.relationship('Student', back_populates='fee_records')
 
 # Update Student model to include the relationship
