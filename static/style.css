@@ -136,3 +136,35 @@ footer {
 .social-icon img:hover {
     transform: scale(1.2);
 }
+
+/* Styles for interactive cards and buttons */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    color: black !important;
+}
+
+.btn-primary, .btn-danger {
+    transition: transform 0.2s ease-in-out;
+}
+
+.btn-primary:hover, .btn-danger:hover {
+    transform: scale(1.05);
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.btn-warning {
+    color: #fff;
+}
+
+.card-body, .card-title, .form-label, input {
+    color: black !important;
+}
+
+.card p-4 {
+    background-color: black;
+}
