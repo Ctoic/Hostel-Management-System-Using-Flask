@@ -157,7 +157,7 @@ def expenses():
                          current_month=month,
                          current_year=year)
 
-INCOME = 345000
+INCOME = 330000
 
 @app.route('/export_pdf/<int:year>/<int:month>', methods=['GET'])
 def export_pdf(year, month):
