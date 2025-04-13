@@ -1,53 +1,29 @@
-<!-- templates/view_fee_records.html -->
 {% extends 'base.html' %}
-{% block title %}Fee Records{% endblock %}
+
+{% block title %}View Fee Records{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h2 class="card-title">Fee Records for {{ student.name }}</h2>
-            <a href="{{ url_for('view_all_fee_records') }}" class="btn btn-info">
-                <i class="fas fa-list-alt"></i> View All Records
-            </a>
-        </div>
+<h2 class="text-center mt-5 text-secondary">{{ student.name }} - Fee Records</h2>
+<div class="d-flex justify-content-center mt-3">
+    <div class="card w-75">
         <div class="card-body">
-            {% if student.fee_records %}
-                <table class="table table-hover table-bordered">
-                    <thead class="table-light">
-                        <tr>
-                            <th scope="col">Date</th>
-                            <th scope="col">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for record in student.fee_records %}
-                        <tr>
-                            <td>{{ record.date_paid.strftime('%Y-%m-%d') }}</td>
-                            <td>${{ record.amount | round(2) }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p class="text-muted">No fee records available for this student.</p>
-            {% endif %}
-        </div>
-        <div class="card-footer text-center">
-            <a href="{{ url_for('collect_fee') }}" class="btn btn-success">
-                <i class="fas fa-plus-circle"></i> Collect New Payment
-            </a>
+            <table class="table table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Amount Paid</th>
+                        <th>Date Paid</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fee_record in student.fee_records %}
+                    <tr>
+                        <td>Rs {{ fee_record.amount }}</td>
+                        <td>{{ fee_record.date_paid.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-
-<style>
-    .card {
-        border-radius: 10px;
-        overflow: hidden;
-    }
-    .table-hover tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-</style>
 {% endblock %}

@@ -3,12 +3,12 @@ from wtforms.validators import DataRequired, NumberRange, Email, Length, Regexp
 from wtforms import StringField, FloatField, SubmitField, FileField , IntegerField, DateField, PasswordField  # DateField imported
 from flask_wtf.file import FileRequired, FileAllowed
 
-
-# forms.py
 class FeeCollectionForm(FlaskForm):
-    student_id = IntegerField('Student ID', validators=[DataRequired()])
-    amount = FloatField('Amount', validators=[DataRequired(), NumberRange(min=0)])
-    submit = SubmitField('Add Payment')
+    student_name = StringField('Student Name', validators=[DataRequired()])
+    amount = FloatField('Amount', validators=[DataRequired()])
+    date = DateField('Date Paid', validators=[DataRequired()])
+    submit = SubmitField('Record Payment')
+
 
 
 

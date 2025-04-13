@@ -1,18 +1,59 @@
-<!-- templates/collect_fee.html -->
 {% extends 'base.html' %}
-{% block title %}Collect Fee{% endblock %}
+
+{% block title %}Fee Collection{% endblock %}
+
 {% block content %}
-<h2>Collect Fee</h2>
-<form method="POST" action="{{ url_for('collect_fee') }}">
-    {{ form.hidden_tag() }}
-    <div class="form-group">
-        {{ form.student_id.label }} {{ form.student_id(class="form-control") }}
+<div class="d-flex justify-content-center mt-4">
+    <div class="card p-4" style="width: 100%; max-width: 500px;">
+        <div class="card-body">
+            <h1 class="card-title text-center text-primary">Collect Fee</h1>
+            <form method="POST" action="{{ url_for('collect_fee') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    <label for="student_name" class="form-label fw-bold">Student Name</label>
+                    {{ form.student_name(class="form-control shadow-sm") }}
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label fw-bold">Amount</label>
+                    {{ form.amount(class="form-control shadow-sm") }}
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label fw-bold">Date Paid</label>
+                    {{ form.date(class="form-control shadow-sm") }}
+                </div>
+                <div class="d-flex justify-content-center">
+                    {{ form.submit(class="btn btn-primary px-4 shadow-sm") }}
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="form-group">
-        {{ form.amount.label }} {{ form.amount(class="form-control") }}
+</div>
+
+<!-- Display Fee Records for the Selected Month -->
+<h2 class="text-center mt-5 text-secondary">Fee Records - {{ month_name[current_month] }} {{ current_year }}</h2><div class="d-flex justify-content-center mt-3">
+    <div class="card w-75">
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Amount Paid</th>
+                        <th>Date Paid</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in fee_records %}
+                    <tr>
+                        <td>{{ record.student.name }}</td>
+                        <td>Rs {{ record.amount }}</td>
+                        <td>{{ record.date_paid.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3 class="text-center text-primary">Total Fee Collected: Rs {{ total_fee }}</h3>
+        </div>
     </div>
-    <div class="form-group">
-        {{ form.submit(class="btn btn-primary") }}
-    </div>
-</form>
+</div>
+
 {% endblock %}

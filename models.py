@@ -14,6 +14,7 @@ class FeeRecord(db.Model):
     date_paid = db.Column(db.Date, default=datetime.utcnow)
     student = db.relationship('Student', back_populates='fee_records')
 
+
 # Room Model
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
