@@ -287,6 +287,8 @@ def rooms():
     all_rooms = Room.query.all()
     return render_template('rooms.html', rooms=all_rooms)
 
+# Admin Registration
+
 @app.route('/admin_register', methods=['GET', 'POST'])
 def admin_register():
     form = AdminRegisterForm()
@@ -349,14 +351,6 @@ def collect_fee():
 
     return render_template('collect_fee.html', form=form, fee_records=fee_records, total_fee=total_fee, current_month=month, current_year=year, month_name=month_name)
 
-
-@app.route('/student/<int:id>/fee_records')
-@login_required
-def view_fee_records(id):
-    # Fetch the student using 'id' from the URL
-    student = Student.query.get_or_404(id)
-    return render_template('view_fee_records.html', student=student)
-    # Pass student to the template
 
 @app.template_filter('month_name')  # Register the filter       
 def month_name_filter(month_number):

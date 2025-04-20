@@ -55,5 +55,12 @@
         </div>
     </div>
 </div>
+{% if fee_records %}
+    <p>There are {{ fee_records|length }} records</p>
+{% else %}
+    <p>No fee records found for this month.</p>
+{% endif %}
+
 
 {% endblock %}
+    

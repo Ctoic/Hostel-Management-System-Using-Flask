@@ -10,6 +10,7 @@ db = SQLAlchemy()
 class FeeRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    name= db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     date_paid = db.Column(db.Date, default=datetime.utcnow)
     student = db.relationship('Student', back_populates='fee_records')
@@ -58,3 +59,9 @@ class Admin(db.Model, UserMixin):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), nullable=False, unique=True)
+    email = db.Column(db.String(150), nullable=False, unique=True)
+    password = db.Column(db.String(150), nullable=False)
