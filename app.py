@@ -134,7 +134,7 @@ def expenses():
     month = request.args.get('month', datetime.now().month, type=int)
     year = request.args.get('year', datetime.now().year, type=int)
 
-    # Get the previous month's expenses
+    # Get the previous month's data
     prev_month = month - 1 if month > 1 else 12
     prev_year = year if month > 1 else year - 1
 
@@ -151,8 +151,26 @@ def expenses():
     ).order_by(Expense.date.desc()).all()
 
     # Calculate totals for both months
-    total_current = sum(expense.price for expense in expenses_current)
-    total_previous = sum(expense.price for expense in expenses_previous)
+    total_expenses_current = sum(expense.price for expense in expenses_current)
+    total_expenses_previous = sum(expense.price for expense in expenses_previous)
+
+    # Get fee collections for current month
+    fee_records_current = FeeRecord.query.filter(
+        extract('year', FeeRecord.date_paid) == year,
+        extract('month', FeeRecord.date_paid) == month
+    ).all()
+    total_income_current = sum(record.amount for record in fee_records_current)
+
+    # Get fee collections for previous month
+    fee_records_previous = FeeRecord.query.filter(
+        extract('year', FeeRecord.date_paid) == prev_year,
+        extract('month', FeeRecord.date_paid) == prev_month
+    ).all()
+    total_income_previous = sum(record.amount for record in fee_records_previous)
+
+    # Calculate remaining balance
+    remaining_balance_current = total_income_current - total_expenses_current
+    remaining_balance_previous = total_income_previous - total_expenses_previous
 
     if form.validate_on_submit():
         expense = Expense(
@@ -170,13 +188,17 @@ def expenses():
                          form=form,
                          expenses_current=expenses_current,
                          expenses_previous=expenses_previous,
-                         total_current=total_current,
-                         total_previous=total_previous,
+                         total_expenses_current=total_expenses_current,
+                         total_expenses_previous=total_expenses_previous,
+                         total_income_current=total_income_current,
+                         total_income_previous=total_income_previous,
+                         remaining_balance_current=remaining_balance_current,
+                         remaining_balance_previous=remaining_balance_previous,
                          current_month=month,
                          current_year=year,
                          prev_month=prev_month,
                          prev_year=prev_year,
-                         month_names=month_name)  # Pass month_name to the template
+                         month_names=month_name)
 
 @app.route('/export_pdf/<int:year>/<int:month>', methods=['GET'])
 def export_pdf(year, month):
@@ -188,7 +210,15 @@ def export_pdf(year, month):
 
     # Calculate total expenses for the month
     total_expenses = sum(expense.price for expense in expenses)
-    remaining_balance = INCOME - total_expenses
+    
+    # Get total income from fee records for the month
+    total_income = db.session.query(db.func.sum(FeeRecord.amount)).filter(
+        db.extract('year', FeeRecord.date_paid) == year,
+        db.extract('month', FeeRecord.date_paid) == month
+    ).scalar() or 0
+
+    # Calculate remaining balance
+    remaining_balance = total_income - total_expenses
 
     # Create a BytesIO buffer for the PDF
     buffer = BytesIO()
@@ -201,12 +231,9 @@ def export_pdf(year, month):
 
     # Income and Expense Summary
     pdf.setFont("Helvetica-Bold", 12)
-    pdf.drawString(50, height - 100, f"Total Income: Rs {INCOME}")
+    pdf.drawString(50, height - 100, f"Total Income: Rs {total_income}")
     pdf.drawString(50, height - 120, f"Total Expenses: Rs {total_expenses}")
-    if total_expenses > INCOME:
-        pdf.drawString(50, height - 140, f"Additional Amount by Donors: Rs {total_expenses - INCOME}")
-    
-
+    pdf.drawString(50, height - 140, f"Remaining Balance: Rs {remaining_balance}")
 
     # Table headers
     y_position = height - 180
@@ -316,40 +343,66 @@ def admin_register():
 def collect_fee():
     form = FeeCollectionForm()
 
-    if form.validate_on_submit():
-        student_name = form.student_name.data
-        amount = form.amount.data
-        date_paid = form.date.data
-        student = Student.query.filter_by(name=student_name).first()
-
-        if student:
-            fee_record = FeeRecord(
-                student_id=student.id,
-                amount=amount,
-                date_paid=date_paid
-            )
-            db.session.add(fee_record)
-            db.session.commit()
-            flash('Fee payment recorded successfully!', 'success')
-            return redirect(url_for('collect_fee'))
-
-        else:
-            flash('Student not found', 'danger')
-
     # Get the month and year filter parameters
     month = request.args.get('month', datetime.now().month, type=int)
     year = request.args.get('year', datetime.now().year, type=int)
 
-    # Query the fee records for the selected month and year
+    # Get all active students
+    active_students = Student.query.filter_by(status='active').all()
+
+    # Get students who have paid fees for the current month
+    paid_students = []
+    unpaid_students = []
+    
+    for student in active_students:
+        if student.is_fee_paid:
+            paid_students.append(student)
+        else:
+            unpaid_students.append(student)
+
+    # Get fee records for the selected month and year
     fee_records = FeeRecord.query.filter(
         db.extract('year', FeeRecord.date_paid) == year,
         db.extract('month', FeeRecord.date_paid) == month
     ).join(Student).all()
 
-    # Calculate the total fee collected for the month
+    # Calculate total fee collected for the month
     total_fee = sum(record.amount for record in fee_records)
 
-    return render_template('collect_fee.html', form=form, fee_records=fee_records, total_fee=total_fee, current_month=month, current_year=year, month_name=month_name)
+    if form.validate_on_submit():
+        student_name = form.student_name.data
+        amount = form.amount.data
+        date_paid = form.date.data
+        
+        student = Student.query.filter_by(name=student_name).first()
+
+        if student:
+            # Check if student has already paid for this month
+            if student.is_fee_paid:
+                flash('This student has already paid fees for this month!', 'warning')
+            else:
+                fee_record = FeeRecord(
+                    student_id=student.id,
+                    amount=amount,
+                    date_paid=date_paid
+                )
+                student.last_fee_payment = date_paid
+                db.session.add(fee_record)
+                db.session.commit()
+                flash('Fee payment recorded successfully!', 'success')
+                return redirect(url_for('collect_fee'))
+        else:
+            flash('Student not found', 'danger')
+
+    return render_template('collect_fee.html', 
+                         form=form, 
+                         fee_records=fee_records, 
+                         total_fee=total_fee, 
+                         current_month=month, 
+                         current_year=year, 
+                         month_name=month_name,
+                         paid_students=paid_students,
+                         unpaid_students=unpaid_students)
 
 
 @app.template_filter('month_name')  # Register the filter       
@@ -357,4 +410,6 @@ def month_name_filter(month_number):
     return month_name[month_number]
 
 if __name__ == '__main__':  
+    with app.app_context():
+        create_tables()
     app.run(debug=True,port=5051)

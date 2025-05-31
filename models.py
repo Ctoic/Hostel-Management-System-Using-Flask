@@ -10,26 +10,52 @@ db = SQLAlchemy()
 class FeeRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    name= db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     date_paid = db.Column(db.Date, default=datetime.utcnow)
-    student = db.relationship('Student', back_populates='fee_records')
+    student = relationship('Student', back_populates='fee_records')
 
 
 # Room Model
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     room_number = db.Column(db.Integer, unique=True, nullable=False)
-    students = db.relationship('Student', backref='room', lazy=True)
+    students = relationship('Student', back_populates='room')
 
 # Student Model
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    fee = db.Column(db.Float, nullable=False, server_default='0')
-    picture = db.Column(db.String(100), nullable=True)
+    fee = db.Column(db.Float, nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
-    fee_records = db.relationship('FeeRecord', back_populates='student', cascade="all, delete-orphan")
+    picture = db.Column(db.String(100))
+    status = db.Column(db.String(20), default='active')  # active, inactive, graduated
+    enrollment_date = db.Column(db.DateTime, default=datetime.utcnow)
+    last_fee_payment = db.Column(db.DateTime)
+    
+    # Relationships
+    room = relationship('Room', back_populates='students')
+    fee_records = relationship('FeeRecord', back_populates='student')
+
+    def __repr__(self):
+        return f'<Student {self.name}>'
+
+    @property
+    def is_fee_paid(self):
+        """Check if the student has paid fees for the current month"""
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+        return FeeRecord.query.filter(
+            FeeRecord.student_id == self.id,
+            db.extract('month', FeeRecord.date_paid) == current_month,
+            db.extract('year', FeeRecord.date_paid) == current_year
+        ).first() is not None
+
+    @property
+    def fee_status(self):
+        """Get the fee payment status for the current month"""
+        if not self.is_fee_paid:
+            return 'unpaid'
+        return 'paid'
 
 # Expense Model
 class Expense(db.Model):
