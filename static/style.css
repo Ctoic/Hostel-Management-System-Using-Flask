@@ -162,7 +162,7 @@ footer {
 }
 
 .card-body, .card-title, .form-label, input {
-    color: black !important;
+    color: rgb(239, 239, 239) !important;
 }
 
 .card p-4 {
