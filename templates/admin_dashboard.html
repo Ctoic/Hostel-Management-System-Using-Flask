@@ -6,137 +6,172 @@
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            background-color: #121212;
-            color: #ffffff;
+            background-color: #f8f9fa;
+            color: #212529;
         }
-        .card {
-            border: none;
-            background: #1f1f1f;
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
-        .navbar, .card-header {
-            background-color: #212529;
+        .metric-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #007bff, #6610f2);
-            border: none;
-            transition: background 0.3s ease;
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #6610f2, #007bff);
+        .metric-label {
+            color: #6c757d;
+            font-size: 0.875rem;
         }
-        .btn-success, .btn-info {
-            transition: background 0.3s ease;
+        .chart-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 2rem;
         }
-        .btn-success:hover, .btn-info:hover {
-            opacity: 0.8;
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #212529;
         }
-        .chart-animate {
-            animation: fadeIn 1s ease;
+        .profit {
+            color: #198754;
         }
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+        .loss {
+            color: #dc3545;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        }
+        .navbar-brand {
+            font-weight: 600;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        .nav-link:hover {
+            color: white !important;
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="#">Admin Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-person-circle"></i> Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a>
-                </li>
-            </ul>
+        <div class="container">
+            <a class="navbar-brand" href="#">Hostel Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('collect_fee') }}">
+                            <i class="fas fa-money-bill-wave me-1"></i> Fee Collection
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('expenses') }}">
+                            <i class="fas fa-file-invoice-dollar me-1"></i> Expenses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('students') }}">
+                            <i class="fas fa-users me-1"></i> Students
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="container mt-5">
-        <!-- Dashboard Cards -->
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <a href="{{ url_for('enroll') }}" class="btn btn-primary w-100">
-                            <i class="bi bi-person-plus"></i> Add Students
-                        </a>
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <div class="container">
+            <!-- Summary Metrics -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-icon text-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="metric-value">{{ total_students }}</div>
+                        <div class="metric-label">Total Active Students</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <a href="{{ url_for('rooms') }}" class="btn btn-primary w-100">
-                            <i class="bi bi-house-door"></i> Manage Rooms
-                        </a>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-icon text-success">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="metric-value">Rs {{ current_month_income }}</div>
+                        <div class="metric-label">Monthly Income</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <a href="{{ url_for('expenses') }}" class="btn btn-primary w-100">
-                            <i class="bi bi-currency-dollar"></i> Expense Sheet
-                        </a>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-icon text-danger">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="metric-value">Rs {{ current_month_expenses }}</div>
+                        <div class="metric-label">Monthly Expenses</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <a href="#" class="btn btn-primary w-100">
-                            <i class="bi bi-people-fill"></i> Employee Info
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="row mt-5">
-            <!-- Expense Chart -->
-            <div class="col-md-6">
-                <div class="card shadow-sm chart-animate">
-                    <div class="card-header text-center">
-                        <h5>Monthly Expense Overview</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="expenseChart"></canvas>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-icon {% if profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="metric-value {% if profit_loss >= 0 %}profit{% else %}loss{% endif %}">
+                            Rs {{ profit_loss }}
+                        </div>
+                        <div class="metric-label">Monthly Profit/Loss</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Student, Employee, and Donor Counts -->
-            <div class="col-md-6">
-                <div class="card shadow-sm chart-animate">
-                    <div class="card-header text-center">
-                        <h5>Student, Employee & Donor Overview</h5>
+            <!-- Charts Row -->
+            <div class="row">
+                <!-- Monthly Income vs Expenses Chart -->
+                <div class="col-md-8">
+                    <div class="chart-card">
+                        <h5 class="chart-title">Monthly Income vs Expenses</h5>
+                        <canvas id="monthlyChart"></canvas>
                     </div>
-                    <div class="card-body text-center">
-                        <h5>Number of Students in Hostel</h5>
-                        <h2 id="studentCount" class="display-4">120</h2>
-                        <hr class="text-light">
-                        <h5>Number of Employees</h5>
-                        <h2 id="EmployeeCount" class="display-4">04</h2>
-                        <hr class="text-light">
-                        <h5>Number of Donors</h5>
-                        <h2 id="DonorsCount" class="display-4">10</h2>
+                </div>
+                <!-- Fee Collection Status -->
+                <div class="col-md-4">
+                    <div class="chart-card">
+                        <h5 class="chart-title">Fee Collection Status</h5>
+                        <canvas id="feeStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expense Distribution Chart -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="chart-card">
+                        <h5 class="chart-title">Expense Distribution</h5>
+                        <canvas id="expenseDistributionChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -146,43 +181,111 @@
     <!-- Bootstrap and Chart.js JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Expense Chart Data
-        const expenseData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-            datasets: [{
-                label: 'Expenses (Rs)',
-                data: [500000, 460000, 750000, 800000, 886000, 900500],
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        };
-
-        // Configure Expense Chart
-        const expenseConfig = {
+        // Monthly Income vs Expenses Chart
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        new Chart(monthlyCtx, {
             type: 'bar',
-            data: expenseData,
+            data: {
+                labels: {{ months|tojson }},
+                datasets: [{
+                    label: 'Income',
+                    data: {{ monthly_income|tojson }},
+                    backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                    borderColor: 'rgb(40, 167, 69)',
+                    borderWidth: 1
+                }, {
+                    label: 'Expenses',
+                    data: {{ monthly_expenses|tojson }},
+                    backgroundColor: 'rgba(220, 53, 69, 0.5)',
+                    borderColor: 'rgb(220, 53, 69)',
+                    borderWidth: 1
+                }]
+            },
             options: {
                 responsive: true,
                 scales: {
-                    y: { beginAtZero: true }
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rs ' + value;
+                            }
+                        }
+                    }
                 },
                 plugins: {
-                    legend: { labels: { color: "#ffffff" } }
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': Rs ' + context.raw;
+                            }
+                        }
+                    }
                 }
             }
-        };
+        });
 
-        // Render Expense Chart
-        const expenseChart = new Chart(
-            document.getElementById('expenseChart'),
-            expenseConfig
-        );
+        // Fee Collection Status Chart
+        const feeStatusCtx = document.getElementById('feeStatusChart').getContext('2d');
+        new Chart(feeStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Fully Paid', 'Partially Paid', 'Unpaid'],
+                datasets: [{
+                    data: [{{ fully_paid }}, {{ partially_paid }}, {{ unpaid }}],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
 
-        // Update Student, Employee, and Donor Counts (Sample values)
-        document.getElementById('studentCount').textContent = '36';
-        document.getElementById('EmployeeCount').textContent = '04';
-        document.getElementById('DonorsCount').textContent = '10';
+        // Expense Distribution Chart
+        const expenseDistCtx = document.getElementById('expenseDistributionChart').getContext('2d');
+        new Chart(expenseDistCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ expense_categories|map(attribute='item_name')|list|tojson }},
+                datasets: [{
+                    data: {{ expense_categories|map(attribute='total')|list|tojson }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': Rs ' + context.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
