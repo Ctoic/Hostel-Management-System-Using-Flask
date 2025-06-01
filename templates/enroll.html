@@ -3,63 +3,165 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="display-4 text-center mb-4">Enroll Student</h2>
-    <form method="POST" enctype="multipart/form-data">
+  <div class="card shadow-lg border-0 fade-in">
+    <!-- Card Header -->
+    <div class="card-header bg-gradient-blue text-white d-flex align-items-center">
+      <i class="fas fa-user-graduate me-2 fs-4"></i>
+      <h3 class="mb-0">Enroll New Student</h3>
+    </div>
+    <!-- Card Body / Form -->
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
         {{ form.hidden_tag() }}
-        
-        <div class="mb-4">
-            {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-control") }}
-            <div class="invalid-feedback">
+
+        <div class="row g-4">
+          <!-- Student Name -->
+          <div class="col-md-6">
+            <label for="{{ form.name.id }}" class="form-label">Student Name</label>
+            <div class="input-group shadow-sm">
+              <span class="input-group-text bg-white">
+                <i class="fas fa-id-card text-secondary"></i>
+              </span>
+              {{ form.name(class="form-control form-control-lg", id="name", placeholder="Enter full name", required="required") }}
+              <div class="invalid-feedback">
                 Please enter the student's name.
+              </div>
             </div>
-        </div>
-        
-        <div class="mb-4">
-            {{ form.fee.label(class="form-label") }}
-            {{ form.fee(class="form-control") }}
-            <div class="invalid-feedback">
+          </div>
+
+          <!-- Fee Amount -->
+          <div class="col-md-6">
+            <label for="{{ form.fee.id }}" class="form-label">Fee Amount (Rs)</label>
+            <div class="input-group shadow-sm">
+              <span class="input-group-text bg-white">Rs</span>
+              {{ form.fee(class="form-control form-control-lg", id="fee", placeholder="e.g. 15000", required="required") }}
+              <div class="invalid-feedback">
                 Please enter the fee amount.
+              </div>
             </div>
-        </div>
-        
-        <div class="mb-4">
-            {{ form.room_number.label(class="form-label") }}
-            {{ form.room_number(class="form-control") }}
-            <div class="invalid-feedback">
+          </div>
+
+          <!-- Room Number -->
+          <div class="col-md-6">
+            <label for="{{ form.room_number.id }}" class="form-label">Room Number</label>
+            <div class="input-group shadow-sm">
+              <span class="input-group-text bg-white">
+                <i class="fas fa-door-open text-secondary"></i>
+              </span>
+              {{ form.room_number(class="form-control form-control-lg", id="room_number", placeholder="Select room", required="required") }}
+              <div class="invalid-feedback">
                 Please select a room number.
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div class="mb-4">
-            {{ form.picture.label(class="form-label") }}
-            {{ form.picture(class="form-control") }}
-            <div class="invalid-feedback">
+          <!-- Picture Upload -->
+          <div class="col-md-6">
+            <label for="{{ form.picture.id }}" class="form-label">Upload Picture</label>
+            <div class="input-group shadow-sm">
+              <span class="input-group-text bg-white">
+                <i class="fas fa-camera text-secondary"></i>
+              </span>
+              {{ form.picture(class="form-control form-control-lg", id="picture", accept="image/*", required="required") }}
+              <div class="invalid-feedback">
                 Please upload a picture of the student.
+              </div>
             </div>
+          </div>
         </div>
 
-        <div class="d-flex justify-content-center">
-            <button type="submit" class="btn btn-primary btn-lg">{{ form.submit.label.text }}</button>
+        <!-- Image Preview -->
+        <div id="preview-container" class="text-center mt-4">
+          <img id="imgPreview" src="#" alt="Image Preview" class="img-thumbnail d-none" style="max-width: 150px;">
         </div>
-    </form>
+
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-center mt-4">
+          <button type="submit" class="btn btn-gradient-green btn-lg shadow">
+            <i class="fas fa-check-circle me-1"></i> {{ form.submit.label.text }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
+<!-- Inline CSS -->
+<style>
+  /* Fade-in Animation */
+  .fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Gradient Backgrounds */
+  .bg-gradient-blue {
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+  }
+  .btn-gradient-green {
+    background: linear-gradient(135deg, #34d399, #059669) !important;
+    border: none !important;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .btn-gradient-green:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+  }
+
+  /* Card Hover Elevation */
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Input Focus Styles */
+  .form-control:focus, .form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+  }
+
+  /* Image Preview Styling */
+  #imgPreview {
+    border-radius: 0.5rem;
+    max-height: 150px;
+    object-fit: cover;
+  }
+</style>
+
+<!-- JavaScript: Bootstrap Validation + Image Preview -->
 <script>
-    // Example of adding Bootstrap validation for the form
-    (function () {
-        'use strict'
-        var forms = document.querySelectorAll('.needs-validation')
-        Array.prototype.slice.call(forms)
-            .forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })()
+  // Bootstrap form validation
+  (function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+
+  // Image preview functionality
+  document.getElementById('picture').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('imgPreview');
+    if (file) {
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove('d-none');
+    } else {
+      preview.classList.add('d-none');
+    }
+  });
 </script>
+
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
