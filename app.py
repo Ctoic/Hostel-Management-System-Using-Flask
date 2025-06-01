@@ -15,6 +15,7 @@ from calendar import month_name
 from sqlalchemy import extract
 import pandas as pd
 import openpyxl
+from flask_wtf.csrf import CSRFProtect, validate_csrf, CSRFError
 
 
 app = Flask(__name__)
@@ -22,6 +23,11 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_secret_key')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hostel.db'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 minutes
+app.config['WTF_CSRF_ENABLED'] = True
+app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY', 'your_csrf_secret_key')
+
+# Initialize CSRF protection
+csrf = CSRFProtect(app)
 
 db.init_app(app)
 bcrypt = Bcrypt(app)
@@ -376,10 +382,11 @@ def register():
 @app.route('/students')
 @login_required
 def students():
-    page = request.args.get('page', 1, type=int)  # Get current page number, default is 1
-    per_page = 10  # Number of students per page
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
     paginated_students = Student.query.paginate(page=page, per_page=per_page)
-    return render_template('students.html', students=paginated_students)
+    form = EnrollForm()  # Create an instance of the form for CSRF token
+    return render_template('students.html', students=paginated_students, form=form)
 
 
 @app.route('/rooms')
@@ -587,6 +594,33 @@ def download_sample_excel():
         as_attachment=True,
         download_name='sample_student_template.xlsx'
     )
+
+@app.route('/delete_student/<int:student_id>', methods=['POST'])
+@login_required
+def delete_student(student_id):
+    # Only check CSRF token validity
+    try:
+        validate_csrf(request.form.get('csrf_token'))
+    except CSRFError:
+        flash('Invalid CSRF token. Please try again.', 'danger')
+        return redirect(url_for('students'))
+
+    try:
+        student = Student.query.get_or_404(student_id)
+        # Delete associated fee records first
+        FeeRecord.query.filter_by(student_id=student_id).delete()
+        # Delete the student's picture file if it exists
+        if student.picture:
+            picture_path = os.path.join(app.config['UPLOAD_FOLDER'], student.picture)
+            if os.path.exists(picture_path):
+                os.remove(picture_path)
+        db.session.delete(student)
+        db.session.commit()
+        flash('Student deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting student: {str(e)}', 'danger')
+    return redirect(url_for('students'))
 
 if __name__ == '__main__':  
     with app.app_context():
