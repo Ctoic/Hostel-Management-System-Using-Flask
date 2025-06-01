@@ -3,333 +3,602 @@
 {% block title %}Expenses{% endblock %}
 
 {% block content %}
-<!-- Summary Cards -->
-<div class="container-fluid mt-4">
-    <div class="row">
-        <!-- Current Month Income -->
-        <div class="col-md-3">
-            <div class="card bg-success text-white mb-4 shadow-lg" style="animation: slideInLeft 0.5s;">
-                <div class="card-body">
-                    <h5 class="card-title">Current Month Income</h5>
-                    <h2 class="display-4">Rs {{ total_income_current }}</h2>
-                    <p class="mb-0">Total fees collected for {{ month_names[current_month] }} {{ current_year }}</p>
-                </div>
-            </div>
-        </div>
-        <!-- Current Month Expenses -->
-        <div class="col-md-3">
-            <div class="card bg-danger text-white mb-4 shadow-lg" style="animation: slideInUp 0.5s;">
-                <div class="card-body">
-                    <h5 class="card-title">Current Month Expenses</h5>
-                    <h2 class="display-4">Rs {{ total_expenses_current }}</h2>
-                    <p class="mb-0">Total expenses for {{ month_names[current_month] }} {{ current_year }}</p>
-                </div>
-            </div>
-        </div>
-        <!-- Current Month Balance -->
-        <div class="col-md-3">
-            <div class="card bg-primary text-white mb-4 shadow-lg" style="animation: slideInUp 0.5s;">
-                <div class="card-body">
-                    <h5 class="card-title">Current Month Balance</h5>
-                    <h2 class="display-4">Rs {{ remaining_balance_current }}</h2>
-                    <p class="mb-0">Remaining balance for {{ month_names[current_month] }} {{ current_year }}</p>
-                </div>
-            </div>
-        </div>
-        <!-- Previous Month Summary -->
-        <div class="col-md-3">
-            <div class="card bg-info text-white mb-4 shadow-lg" style="animation: slideInRight 0.5s;">
-                <div class="card-body">
-                    <h5 class="card-title">Previous Month Summary</h5>
-                    <p class="mb-2">Income: Rs {{ total_income_previous }}</p>
-                    <p class="mb-2">Expenses: Rs {{ total_expenses_previous }}</p>
-                    <p class="mb-0">Balance: Rs {{ remaining_balance_previous }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Page Background & Container -->
+<div class="expenses-page-container">
 
-<!-- Add New Expense Form -->
-<div class="container-fluid mt-4">
+  <!-- ===========================
+       1. Summary Cards Section
+       =========================== -->
+  <div class="container-fluid mt-4">
+    <div class="row g-4">
+      <!-- Current Month Income -->
+      <div class="col-md-3 col-sm-6">
+        <div class="metric-card bg-gradient-green text-white shadow-lg">
+          <div class="card-icon">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <div class="card-body">
+            <h6 class="card-title">Current Month Income</h6>
+            <h2 class="card-value">Rs {{ total_income_current }}</h2>
+            <p class="card-text">Fees collected in {{ month_names[current_month] }} {{ current_year }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Month Expenses -->
+      <div class="col-md-3 col-sm-6">
+        <div class="metric-card bg-gradient-red text-white shadow-lg">
+          <div class="card-icon">
+            <i class="fas fa-money-bill-wave"></i>
+          </div>
+          <div class="card-body">
+            <h6 class="card-title">Current Month Expenses</h6>
+            <h2 class="card-value">Rs {{ total_expenses_current }}</h2>
+            <p class="card-text">Expenses in {{ month_names[current_month] }} {{ current_year }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Month Balance -->
+      <div class="col-md-3 col-sm-6">
+        <div class="metric-card bg-gradient-blue text-white shadow-lg">
+          <div class="card-icon">
+            <i class="fas fa-balance-scale"></i>
+          </div>
+          <div class="card-body">
+            <h6 class="card-title">Current Month Balance</h6>
+            <h2 class="card-value">Rs {{ remaining_balance_current }}</h2>
+            <p class="card-text">Balance for {{ month_names[current_month] }} {{ current_year }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Previous Month Summary -->
+      <div class="col-md-3 col-sm-6">
+        <div class="metric-card bg-gradient-teal text-white shadow-lg">
+          <div class="card-icon">
+            <i class="fas fa-history"></i>
+          </div>
+          <div class="card-body">
+            <h6 class="card-title">Previous Month Summary</h6>
+            <p class="card-text mb-1"><strong>Income:</strong> Rs {{ total_income_previous }}</p>
+            <p class="card-text mb-1"><strong>Expenses:</strong> Rs {{ total_expenses_previous }}</p>
+            <p class="card-text mb-0"><strong>Balance:</strong> Rs {{ remaining_balance_previous }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===========================
+       2. Add New Expense Form
+       =========================== -->
+  <div class="container-fluid mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg border-0 rounded-lg" style="animation: fadeIn 0.5s;">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="text-center mb-0">Add New Expense</h3>
+      <div class="col-lg-8 col-md-10">
+        <div class="card form-card shadow-lg border-0">
+          <div class="card-header bg-gradient-blue text-white d-flex align-items-center">
+            <i class="fas fa-plus-circle me-2 fs-4"></i>
+            <h5 class="mb-0">Add New Expense</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="{{ url_for('expenses') }}" class="needs-validation" novalidate>
+              {{ form.hidden_tag() }}
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label for="item_name" class="form-label">Item Name</label>
+                  {{ form.item_name(class="form-control form-control-lg shadow-sm", placeholder="Enter item name", required="required") }}
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('expenses') }}" class="needs-validation" novalidate>
-                        {{ form.hidden_tag() }}
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="item_name" class="form-label">Item Name</label>
-                                {{ form.item_name(class="form-control form-control-lg shadow-sm", placeholder="Enter item name", required="required") }}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rs</span>
-                                    {{ form.price(class="form-control form-control-lg shadow-sm", placeholder="0.00", required="required") }}
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="date" class="form-label">Date</label>
-                                {{ form.date(class="form-control form-control-lg shadow-sm", type="date", required="required") }}
-                            </div>
-                        </div>
-                        <div class="d-grid gap-2">
-                            {{ form.submit(class="btn btn-primary btn-lg shadow-sm") }}
-                        </div>
-                    </form>
+                <div class="col-md-4">
+                  <label for="price" class="form-label">Price</label>
+                  <div class="input-group shadow-sm">
+                    <span class="input-group-text bg-white text-secondary">Rs</span>
+                    {{ form.price(class="form-control form-control-lg", placeholder="0.00", required="required") }}
+                  </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Filter Section -->
-<div class="container-fluid mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg border-0 rounded-lg" style="animation: fadeIn 0.5s;">
-                <div class="card-header bg-info text-white">
-                    <h3 class="text-center mb-0">Filter Expenses</h3>
+                <div class="col-md-4">
+                  <label for="date" class="form-label">Date</label>
+                  {{ form.date(class="form-control form-control-lg shadow-sm", type="date", required="required") }}
                 </div>
-                <div class="card-body">
-                    <form method="GET" action="{{ url_for('expenses') }}" class="row g-3">
-                        <div class="col-md-5">
-                            <label for="year" class="form-label">Year</label>
-                            <select name="year" id="year" class="form-select form-select-lg shadow-sm">
-                                {% for y in range(current_year - 5, current_year + 1) %}
-                                    <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-5">
-                            <label for="month" class="form-label">Month</label>
-                            <select name="month" id="month" class="form-select form-select-lg shadow-sm">
-                                {% for m in range(1, 13) %}
-                                    <option value="{{ m }}" {% if m == current_month %}selected{% endif %}>{{ month_names[m] }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-info btn-lg w-100 shadow-sm">
-                                <i class="fas fa-filter"></i> Filter
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Current Month Expenses Table -->
-<div class="container-fluid mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-lg border-0 rounded-lg" style="animation: fadeIn 0.5s;">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0">Current Month Expenses</h3>
-                    <a href="{{ url_for('export_pdf', year=current_year, month=current_month) }}" class="btn btn-light">
-                        <i class="fas fa-file-pdf"></i> Export PDF
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Item Name</th>
-                                    <th>Price</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for expense in expenses_current %}
-                                <tr class="align-middle">
-                                    <td>{{ expense.item_name }}</td>
-                                    <td>Rs {{ expense.price }}</td>
-                                    <td>{{ expense.date.strftime('%Y-%m-%d') }}</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ expense.id }}" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ expense.id }}" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Previous Month Expenses Table -->
-<div class="container-fluid mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-lg border-0 rounded-lg" style="animation: fadeIn 0.5s;">
-                <div class="card-header bg-info text-white">
-                    <h3 class="mb-0">Previous Month Expenses</h3>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Item Name</th>
-                                    <th>Price</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for expense in expenses_previous %}
-                                <tr class="align-middle">
-                                    <td>{{ expense.item_name }}</td>
-                                    <td>Rs {{ expense.price }}</td>
-                                    <td>{{ expense.date.strftime('%Y-%m-%d') }}</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ expense.id }}" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ expense.id }}" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Modals -->
-{% for expense in expenses_current + expenses_previous %}
-<div class="modal fade" id="editModal{{ expense.id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-warning">
-                <h5 class="modal-title">Edit Expense</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ url_for('edit_expense', expense_id=expense.id) }}" method="POST">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="item_name" class="form-label">Item Name</label>
-                        <input type="text" class="form-control" name="item_name" value="{{ expense.item_name }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="price" class="form-label">Price</label>
-                        <input type="number" step="0.01" class="form-control" name="price" value="{{ expense.price }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" name="date" value="{{ expense.date.strftime('%Y-%m-%d') }}" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-warning">Save Changes</button>
-                </div>
+              </div>
+              <div class="mt-4 d-grid">
+                {{ form.submit(class="btn btn-gradient-green btn-lg shadow") }}
+              </div>
             </form>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Delete Modals -->
-<div class="modal fade" id="deleteModal{{ expense.id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Delete Expense</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this expense?</p>
-                <p><strong>Item:</strong> {{ expense.item_name }}</p>
-                <p><strong>Price:</strong> Rs {{ expense.price }}</p>
-                <p><strong>Date:</strong> {{ expense.date.strftime('%Y-%m-%d') }}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="{{ url_for('delete_expense', expense_id=expense.id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </div>
+
+  <!-- ===========================
+       3. Filter Expenses Section
+       =========================== -->
+  <div class="container-fluid mt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10">
+        <div class="card form-card shadow-lg border-0">
+          <div class="card-header bg-gradient-teal text-white d-flex align-items-center">
+            <i class="fas fa-filter me-2 fs-4"></i>
+            <h5 class="mb-0">Filter Expenses</h5>
+          </div>
+          <div class="card-body">
+            <form method="GET" action="{{ url_for('expenses') }}" class="row g-3">
+              <div class="col-md-5">
+                <label for="year" class="form-label">Year</label>
+                <select name="year" id="year" class="form-select form-select-lg shadow-sm">
+                  {% for y in range(current_year - 5, current_year + 1) %}
+                    <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-5">
+                <label for="month" class="form-label">Month</label>
+                <select name="month" id="month" class="form-select form-select-lg shadow-sm">
+                  {% for m in range(1, 13) %}
+                    <option value="{{ m }}" {% if m == current_month %}selected{% endif %}>{{ month_names[m] }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-gradient-blue btn-lg w-100 shadow">
+                  <i class="fas fa-search me-1"></i> Go
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-{% endfor %}
+  </div>
 
-<!-- Custom CSS -->
+
+  <!-- ========================================
+       4. Current Month Expenses Table Section
+       ======================================== -->
+  <div class="container-fluid mt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-md-12">
+        <div class="card table-card shadow-lg border-0">
+          <div class="card-header bg-gradient-blue text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Current Month Expenses</h5>
+            <a href="{{ url_for('export_pdf', year=current_year, month=current_month) }}" class="btn btn-light btn-sm shadow">
+              <i class="fas fa-file-pdf me-1"></i> Export PDF
+            </a>
+          </div>
+          <div class="card-body px-0">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Item Name</th>
+                    <th class="text-end">Price (Rs)</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for expense in expenses_current %}
+                  <tr>
+                    <td>{{ expense.item_name }}</td>
+                    <td class="text-end">{{ expense.price }}</td>
+                    <td class="text-center">{{ expense.date.strftime('%Y-%m-%d') }}</td>
+                    <td class="text-center">
+                      <div class="btn-group btn-group-sm">
+                        <button type="button"
+                                class="btn btn-warning"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editModal{{ expense.id }}"
+                                title="Edit">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button"
+                                class="btn btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal{{ expense.id }}"
+                                title="Delete">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================
+       5. Previous Month Expenses Table Section
+       ======================================== -->
+  <div class="container-fluid mt-5 mb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-md-12">
+        <div class="card table-card shadow-lg border-0">
+          <div class="card-header bg-gradient-teal text-white d-flex align-items-center">
+            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Previous Month Expenses</h5>
+          </div>
+          <div class="card-body px-0">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Item Name</th>
+                    <th class="text-end">Price (Rs)</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for expense in expenses_previous %}
+                  <tr>
+                    <td>{{ expense.item_name }}</td>
+                    <td class="text-end">{{ expense.price }}</td>
+                    <td class="text-center">{{ expense.date.strftime('%Y-%m-%d') }}</td>
+                    <td class="text-center">
+                      <div class="btn-group btn-group-sm">
+                        <button type="button"
+                                class="btn btn-warning"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editModal{{ expense.id }}"
+                                title="Edit">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button"
+                                class="btn btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal{{ expense.id }}"
+                                title="Delete">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================
+       6. Edit & Delete Modals
+       ====================== -->
+  {% for expense in (expenses_current + expenses_previous) %}
+  <!-- Edit Expense Modal -->
+  <div class="modal fade" id="editModal{{ expense.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-header bg-warning text-white">
+          <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Expense</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{{ url_for('edit_expense', expense_id=expense.id) }}" method="POST" class="needs-validation" novalidate>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Item Name</label>
+              <input type="text"
+                     name="item_name"
+                     class="form-control form-control-lg"
+                     value="{{ expense.item_name }}"
+                     required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Price (Rs)</label>
+              <input type="number"
+                     step="0.01"
+                     name="price"
+                     class="form-control form-control-lg"
+                     value="{{ expense.price }}"
+                     required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Date</label>
+              <input type="date"
+                     name="date"
+                     class="form-control form-control-lg"
+                     value="{{ expense.date.strftime('%Y-%m-%d') }}"
+                     required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-warning shadow-sm">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Expense Modal -->
+  <div class="modal fade" id="deleteModal{{ expense.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title"><i class="fas fa-trash-alt me-2"></i>Delete Expense</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this expense?</p>
+          <p class="mb-1"><strong>Item:</strong> {{ expense.item_name }}</p>
+          <p class="mb-1"><strong>Price:</strong> Rs {{ expense.price }}</p>
+          <p class="mb-0"><strong>Date:</strong> {{ expense.date.strftime('%Y-%m-%d') }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Cancel</button>
+          <form action="{{ url_for('delete_expense', expense_id=expense.id) }}" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-danger shadow-sm">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+</div> <!-- /.expenses-page-container -->
+
+
+<!-- ======================================
+     Inline CSS (You can extract to style.css)
+     ====================================== -->
 <style>
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
+  /* Page Container Background */
+  .expenses-page-container {
+    background: linear-gradient(135deg, #f9fafb 0%, #e2e8f0 100%);
+    padding-bottom: 60px;
+  }
 
-    @keyframes slideInLeft {
-        from { transform: translateX(-100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
+  /* -------------------------------
+     1. Metric Cards Styles
+     ------------------------------- */
+  .metric-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 1.5rem 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
 
-    @keyframes slideInRight {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
+  .metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
 
-    @keyframes slideInUp {
-        from { transform: translateY(100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
+  .metric-card .card-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 2rem;
+    opacity: 0.2;
+  }
 
-    .card {
-        transition: transform 0.3s ease;
-    }
+  .metric-card .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
 
-    .card:hover {
-        transform: translateY(-5px);
-    }
+  .metric-card .card-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
 
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.1);
-        transform: scale(1.01);
-        transition: all 0.3s ease;
-    }
+  .metric-card .card-text {
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
 
-    .btn-group .btn {
-        transition: all 0.3s ease;
-    }
+  /* Gradients for metric cards */
+  .bg-gradient-green {
+    background: linear-gradient(135deg, #34d399, #059669);
+  }
 
-    .btn-group .btn:hover {
-        transform: scale(1.1);
-    }
+  .bg-gradient-red {
+    background: linear-gradient(135deg, #f87171, #b91c1c);
+  }
 
-    .form-control:focus, .form-select:focus {
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        border-color: #86b7fe;
+  .bg-gradient-blue {
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+  }
+
+  .bg-gradient-teal {
+    background: linear-gradient(135deg, #5eead4, #0d9488);
+  }
+
+  /* -------------------------------
+     2. Form Cards Styles
+     ------------------------------- */
+  .form-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .form-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .form-card .card-header {
+    padding: 0.75rem 1.5rem;
+    border-bottom: none;
+    border-radius: 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .form-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .form-card .form-control,
+  .form-card .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .form-card .form-control:focus,
+  .form-card .form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+  }
+
+  .btn-gradient-green {
+    background: linear-gradient(135deg, #34d399, #059669) !important;
+    border: none !important;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .btn-gradient-green:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  .btn-gradient-blue {
+    background: linear-gradient(135deg, #60a5fa, #2563eb) !important;
+    border: none !important;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .btn-gradient-blue:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  /* -------------------------------
+     3. Table Styles
+     ------------------------------- */
+  .table-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .table-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .table-card .card-header {
+    padding: 0.75rem 1.5rem;
+    border-bottom: none;
+    border-radius: 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .table-responsive {
+    margin: 0 1.5rem 1.5rem 1.5rem;
+  }
+
+  .table th,
+  .table td {
+    vertical-align: middle;
+    padding: 0.75rem 1rem;
+  }
+
+  .table thead th {
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: rgba(37, 99, 235, 0.1);
+    transform: scale(1.01);
+    transition: all 0.3s ease;
+  }
+
+  .btn-group .btn {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+
+  .btn-group .btn:hover {
+    transform: scale(1.1);
+  }
+
+  .btn-group .btn i {
+    font-size: 1rem;
+  }
+
+  /* =======================
+     4. Modal Styles
+     ======================= */
+  .modal-content {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transform: scale(0.97);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .modal.show .modal-content {
+    transform: scale(1);
+  }
+
+  .modal-header {
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .modal-title {
+    font-weight: 600;
+  }
+
+  .btn-close {
+    filter: brightness(1.2);
+  }
+
+  /* =======================
+     5. Utility Animations
+     ======================= */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  @media (max-width: 576px) {
+    .metric-card .card-value {
+      font-size: 1.75rem;
     }
+    .metric-card .card-icon {
+      font-size: 1.5rem;
+    }
+  }
 </style>
 
-<!-- Add Font Awesome for icons -->
+<!-- Font Awesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 {% endblock %}
