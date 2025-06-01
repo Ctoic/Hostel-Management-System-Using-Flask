@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Update Students via Excel{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Update Students via Excel</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Instructions:</h5>
+                        <p>Please upload an Excel file (.xlsx or .xls) with the following columns:</p>
+                        <ul>
+                            <li><strong>name</strong> - Student's full name</li>
+                            <li><strong>fee</strong> - Fee amount (numeric)</li>
+                            <li><strong>room_id</strong> - Room number (1-8)</li>
+                            <li><strong>status</strong> (optional) - Student status (active/inactive/graduated)</li>
+                            <li><strong>picture</strong> (optional) - Filename of the student's picture (must exist in static/uploads folder if provided)</li>
+                        </ul>
+                        <hr>
+                        <p class="mb-0"><strong>Important Notes:</strong></p>
+                        <ul>
+                            <li>For existing students: If a student with the same name exists, their information will be updated.</li>
+                            <li>For new students: Only name, fee, and room_id are required. Picture and status are optional.</li>
+                            <li>If you provide a picture filename, make sure the file exists in the static/uploads folder.</li>
+                        </ul>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <a href="{{ url_for('download_sample_excel') }}" class="btn btn-info">
+                            <i class="fas fa-download"></i> Download Sample Excel Template
+                        </a>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data" class="mt-4">
+                        <div class="mb-3">
+                            <label for="excel_file" class="form-label">Select Excel File</label>
+                            <input type="file" class="form-control" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Upload and Update</button>
+                            <a href="{{ url_for('students') }}" class="btn btn-secondary btn-lg">Back to Students List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+.btn {
+    border-radius: 8px;
+}
+
+.form-control {
+    border-radius: 8px;
+}
+</style>
+{% endblock %} 
