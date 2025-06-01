@@ -19,6 +19,7 @@
                         <th>Room</th>
                         <th>Fee</th>
                         <th>Picture</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,6 +29,11 @@
                         <td>{{ student.room.room_number }}</td>
                         <td>{{ student.fee }}</td>
                         <td><img src="{{ url_for('static', filename='uploads/' ~ student.picture) }}" alt="Student Picture" width="100"></td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ student.id }}">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -56,4 +62,31 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Modals -->
+{% for student in students.items %}
+<div class="modal fade" id="deleteModal{{ student.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ student.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel{{ student.id }}">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete student <strong>{{ student.name }}</strong>? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('delete_student', student_id=student.id) }}" method="POST">
+                    {{ form.csrf_token }}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
