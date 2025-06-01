@@ -44,18 +44,42 @@ class Student(db.Model):
         """Check if the student has paid fees for the current month"""
         current_month = datetime.now().month
         current_year = datetime.now().year
-        return FeeRecord.query.filter(
+        total_paid = sum(record.amount for record in FeeRecord.query.filter(
             FeeRecord.student_id == self.id,
             db.extract('month', FeeRecord.date_paid) == current_month,
             db.extract('year', FeeRecord.date_paid) == current_year
-        ).first() is not None
+        ).all())
+        return total_paid >= self.fee
 
     @property
     def fee_status(self):
         """Get the fee payment status for the current month"""
-        if not self.is_fee_paid:
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+        total_paid = sum(record.amount for record in FeeRecord.query.filter(
+            FeeRecord.student_id == self.id,
+            db.extract('month', FeeRecord.date_paid) == current_month,
+            db.extract('year', FeeRecord.date_paid) == current_year
+        ).all())
+        
+        if total_paid == 0:
             return 'unpaid'
-        return 'paid'
+        elif total_paid < self.fee:
+            return 'partial'
+        else:
+            return 'paid'
+
+    @property
+    def remaining_fee(self):
+        """Calculate remaining fee for the current month"""
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+        total_paid = sum(record.amount for record in FeeRecord.query.filter(
+            FeeRecord.student_id == self.id,
+            db.extract('month', FeeRecord.date_paid) == current_month,
+            db.extract('year', FeeRecord.date_paid) == current_year
+        ).all())
+        return max(0, self.fee - total_paid)
 
 # Expense Model
 class Expense(db.Model):
