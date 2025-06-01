@@ -1,149 +1,150 @@
 {% extends 'base.html' %}
-
 {% block title %}Expenses{% endblock %}
 
 {% block content %}
-<!-- Page Background & Container -->
 <div class="expenses-page-container">
-
-  <!-- ===========================
-       1. Summary Cards Section
-       =========================== -->
-  <div class="container-fluid mt-4">
-    <div class="row g-4">
+  <!-- 1. Summary Cards (Optional: can be hidden if you want less clutter) -->
+  <div class="container mt-4 mb-5 summary-row fade-in">
+    <div class="row g-3 justify-content-center">
       <!-- Current Month Income -->
       <div class="col-md-3 col-sm-6">
-        <div class="metric-card bg-gradient-green text-white shadow-lg">
-          <div class="card-icon">
-            <i class="fas fa-wallet"></i>
-          </div>
+        <div class="summary-card bg-gradient-green text-white">
+          <div class="card-icon"><i class="fas fa-wallet"></i></div>
           <div class="card-body">
             <h6 class="card-title">Current Month Income</h6>
             <h2 class="card-value">Rs {{ total_income_current }}</h2>
-            <p class="card-text">Fees collected in {{ month_names[current_month] }} {{ current_year }}</p>
+            <p class="card-text">Fees ({{ month_names[current_month] }} {{ current_year }})</p>
           </div>
         </div>
       </div>
-
       <!-- Current Month Expenses -->
       <div class="col-md-3 col-sm-6">
-        <div class="metric-card bg-gradient-red text-white shadow-lg">
-          <div class="card-icon">
-            <i class="fas fa-money-bill-wave"></i>
-          </div>
+        <div class="summary-card bg-gradient-red text-white">
+          <div class="card-icon"><i class="fas fa-receipt"></i></div>
           <div class="card-body">
             <h6 class="card-title">Current Month Expenses</h6>
             <h2 class="card-value">Rs {{ total_expenses_current }}</h2>
-            <p class="card-text">Expenses in {{ month_names[current_month] }} {{ current_year }}</p>
+            <p class="card-text">Expenses ({{ month_names[current_month] }} {{ current_year }})</p>
           </div>
         </div>
       </div>
-
       <!-- Current Month Balance -->
       <div class="col-md-3 col-sm-6">
-        <div class="metric-card bg-gradient-blue text-white shadow-lg">
-          <div class="card-icon">
-            <i class="fas fa-balance-scale"></i>
-          </div>
+        <div class="summary-card bg-gradient-blue text-white">
+          <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
           <div class="card-body">
             <h6 class="card-title">Current Month Balance</h6>
             <h2 class="card-value">Rs {{ remaining_balance_current }}</h2>
-            <p class="card-text">Balance for {{ month_names[current_month] }} {{ current_year }}</p>
+            <p class="card-text">Balance ({{ month_names[current_month] }} {{ current_year }})</p>
           </div>
         </div>
       </div>
-
       <!-- Previous Month Summary -->
       <div class="col-md-3 col-sm-6">
-        <div class="metric-card bg-gradient-teal text-white shadow-lg">
-          <div class="card-icon">
-            <i class="fas fa-history"></i>
-          </div>
+        <div class="summary-card bg-gradient-teal text-white">
+          <div class="card-icon"><i class="fas fa-history"></i></div>
           <div class="card-body">
             <h6 class="card-title">Previous Month Summary</h6>
             <p class="card-text mb-1"><strong>Income:</strong> Rs {{ total_income_previous }}</p>
             <p class="card-text mb-1"><strong>Expenses:</strong> Rs {{ total_expenses_previous }}</p>
-            <p class="card-text mb-0"><strong>Balance:</strong> Rs {{ remaining_balance_previous }}</p>
+            <p class="card-text"><strong>Balance:</strong> Rs {{ remaining_balance_previous }}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-
-  <!-- ===========================
-       2. Add New Expense Form
-       =========================== -->
-  <div class="container-fluid mt-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 col-md-10">
-        <div class="card form-card shadow-lg border-0">
-          <div class="card-header bg-gradient-blue text-white d-flex align-items-center">
-            <i class="fas fa-plus-circle me-2 fs-4"></i>
-            <h5 class="mb-0">Add New Expense</h5>
-          </div>
-          <div class="card-body">
+  <!-- 2. Accordion: Add New Expense + Filter Expenses -->
+  <div class="container mb-5">
+    <div class="accordion" id="expenseAccordion">
+      <!-- Add New Expense Panel -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingAdd">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseAdd" aria-expanded="false" aria-controls="collapseAdd">
+            <i class="fas fa-plus-circle me-2"></i> Add New Expense
+          </button>
+        </h2>
+        <div id="collapseAdd" class="accordion-collapse collapse" aria-labelledby="headingAdd"
+             data-bs-parent="#expenseAccordion">
+          <div class="accordion-body bg-white p-4 form-card">
             <form method="POST" action="{{ url_for('expenses') }}" class="needs-validation" novalidate>
               {{ form.hidden_tag() }}
               <div class="row g-3">
+                <!-- Floating Label: Item Name -->
                 <div class="col-md-4">
-                  <label for="item_name" class="form-label">Item Name</label>
-                  {{ form.item_name(class="form-control form-control-lg shadow-sm", placeholder="Enter item name", required="required") }}
-                </div>
-                <div class="col-md-4">
-                  <label for="price" class="form-label">Price</label>
-                  <div class="input-group shadow-sm">
-                    <span class="input-group-text bg-white text-secondary">Rs</span>
-                    {{ form.price(class="form-control form-control-lg", placeholder="0.00", required="required") }}
+                  <div class="form-floating">
+                    {{ form.item_name(class="form-control form-control-lg", id="item_name", placeholder="Item Name", required="required") }}
+                    <label for="item_name">Item Name</label>
+                    <div class="invalid-feedback">Enter item name.</div>
                   </div>
                 </div>
+                <!-- Floating Label: Price -->
                 <div class="col-md-4">
-                  <label for="date" class="form-label">Date</label>
-                  {{ form.date(class="form-control form-control-lg shadow-sm", type="date", required="required") }}
+                  <div class="form-floating">
+                    <div class="input-group">
+                      <span class="input-group-text bg-white">Rs</span>
+                      {{ form.price(class="form-control form-control-lg", id="price", placeholder="0.00", step="0.01", required="required") }}
+                    </div>
+                    <label for="price">Price</label>
+                    <div class="invalid-feedback">Enter a valid price.</div>
+                  </div>
+                </div>
+                <!-- Floating Label: Date -->
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ form.date(class="form-control form-control-lg", id="date", type="date", placeholder="Date", required="required") }}
+                    <label for="date">Date</label>
+                    <div class="invalid-feedback">Choose a date.</div>
+                  </div>
                 </div>
               </div>
-              <div class="mt-4 d-grid">
-                {{ form.submit(class="btn btn-gradient-green btn-lg shadow") }}
+              <div class="mt-3 d-grid">
+                {{ form.submit(class="btn btn-gradient-green btn-lg") }}
               </div>
             </form>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-
-  <!-- ===========================
-       3. Filter Expenses Section
-       =========================== -->
-  <div class="container-fluid mt-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 col-md-10">
-        <div class="card form-card shadow-lg border-0">
-          <div class="card-header bg-gradient-teal text-white d-flex align-items-center">
-            <i class="fas fa-filter me-2 fs-4"></i>
-            <h5 class="mb-0">Filter Expenses</h5>
-          </div>
-          <div class="card-body">
-            <form method="GET" action="{{ url_for('expenses') }}" class="row g-3">
-              <div class="col-md-5">
-                <label for="year" class="form-label">Year</label>
-                <select name="year" id="year" class="form-select form-select-lg shadow-sm">
-                  {% for y in range(current_year - 5, current_year + 1) %}
-                    <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
-                  {% endfor %}
-                </select>
+      <!-- Filter Expenses Panel -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingFilter">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            <i class="fas fa-filter me-2"></i> Filter Expenses
+          </button>
+        </h2>
+        <div id="collapseFilter" class="accordion-collapse collapse" aria-labelledby="headingFilter"
+             data-bs-parent="#expenseAccordion">
+          <div class="accordion-body bg-white p-4 form-card">
+            <form method="GET" action="{{ url_for('expenses') }}" class="row g-3 needs-validation" novalidate>
+              <!-- Year Dropdown -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select name="year" id="filter_year" class="form-select" required>
+                    {% for y in range(current_year - 5, current_year + 1) %}
+                      <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                  </select>
+                  <label for="filter_year">Year</label>
+                  <div class="invalid-feedback">Select a year.</div>
+                </div>
               </div>
-              <div class="col-md-5">
-                <label for="month" class="form-label">Month</label>
-                <select name="month" id="month" class="form-select form-select-lg shadow-sm">
-                  {% for m in range(1, 13) %}
-                    <option value="{{ m }}" {% if m == current_month %}selected{% endif %}>{{ month_names[m] }}</option>
-                  {% endfor %}
-                </select>
+              <!-- Month Dropdown -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select name="month" id="filter_month" class="form-select" required>
+                    {% for m in range(1, 13) %}
+                      <option value="{{ m }}" {% if m == current_month %}selected{% endif %}>{{ month_names[m] }}</option>
+                    {% endfor %}
+                  </select>
+                  <label for="filter_month">Month</label>
+                  <div class="invalid-feedback">Select a month.</div>
+                </div>
               </div>
-              <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-gradient-blue btn-lg w-100 shadow">
+              <div class="col-12 text-end mt-2">
+                <button type="submit" class="btn btn-gradient-blue">
                   <i class="fas fa-search me-1"></i> Go
                 </button>
               </div>
@@ -151,26 +152,40 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> <!-- /#expenseAccordion -->
   </div>
 
 
-  <!-- ========================================
-       4. Current Month Expenses Table Section
-       ======================================== -->
-  <div class="container-fluid mt-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-10 col-md-12">
-        <div class="card table-card shadow-lg border-0">
-          <div class="card-header bg-gradient-blue text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Current Month Expenses</h5>
-            <a href="{{ url_for('export_pdf', year=current_year, month=current_month) }}" class="btn btn-light btn-sm shadow">
+  <!-- 3. Tabs: Current & Previous Month Expenses -->
+  <div class="container mb-5 fade-in">
+    <ul class="nav nav-tabs justify-content-center" id="expenseTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="current-tab" data-bs-toggle="tab" data-bs-target="#current-month"
+                type="button" role="tab" aria-controls="current-month" aria-selected="true">
+          <i class="fas fa-calendar-check me-1"></i> Current Month
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="previous-tab" data-bs-toggle="tab" data-bs-target="#previous-month"
+                type="button" role="tab" aria-controls="previous-month" aria-selected="false">
+          <i class="fas fa-calendar-minus me-1"></i> Previous Month
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content mt-3" id="expenseTabsContent">
+      <!-- Current Month Tab Pane -->
+      <div class="tab-pane fade show active" id="current-month" role="tabpanel" aria-labelledby="current-tab">
+        <div class="table-card bg-white shadow-sm">
+          <div class="table-card-header bg-gradient-blue text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="fas fa-receipt me-2"></i> Current Month Expenses</h6>
+            <a href="{{ url_for('export_pdf', year=current_year, month=current_month) }}" 
+               class="btn btn-sm btn-light shadow-sm">
               <i class="fas fa-file-pdf me-1"></i> Export PDF
             </a>
           </div>
-          <div class="card-body px-0">
+          <div class="table-card-body">
             <div class="table-responsive">
-              <table class="table table-striped table-hover align-middle mb-0">
+              <table class="table table-sm table-striped mb-0">
                 <thead class="table-light">
                   <tr>
                     <th>Item Name</th>
@@ -180,54 +195,54 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for expense in expenses_current %}
-                  <tr>
-                    <td>{{ expense.item_name }}</td>
-                    <td class="text-end">{{ expense.price }}</td>
-                    <td class="text-center">{{ expense.date.strftime('%Y-%m-%d') }}</td>
-                    <td class="text-center">
-                      <div class="btn-group btn-group-sm">
-                        <button type="button"
-                                class="btn btn-warning"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editModal{{ expense.id }}"
-                                title="Edit">
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button type="button"
-                                class="btn btn-danger"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteModal{{ expense.id }}"
-                                title="Delete">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  {% endfor %}
+                  {% if expenses_current %}
+                    {% for expense in expenses_current %}
+                    <tr>
+                      <td>{{ expense.item_name }}</td>
+                      <td class="text-end">{{ expense.price }}</td>
+                      <td class="text-center">{{ expense.date.strftime('%Y-%m-%d') }}</td>
+                      <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                          <button type="button" class="btn btn-warning btn-action"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#editModal{{ expense.id }}"
+                                  title="Edit">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button type="button" class="btn btn-danger btn-action"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#deleteModal{{ expense.id }}"
+                                  title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td colspan="4" class="text-center py-4 text-muted">
+                        No expenses found for {{ month_names[current_month] }} {{ current_year }}.
+                      </td>
+                    </tr>
+                  {% endif %}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-
-  <!-- ========================================
-       5. Previous Month Expenses Table Section
-       ======================================== -->
-  <div class="container-fluid mt-5 mb-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-10 col-md-12">
-        <div class="card table-card shadow-lg border-0">
-          <div class="card-header bg-gradient-teal text-white d-flex align-items-center">
-            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Previous Month Expenses</h5>
+      <!-- Previous Month Tab Pane -->
+      <div class="tab-pane fade" id="previous-month" role="tabpanel" aria-labelledby="previous-tab">
+        <div class="table-card bg-white shadow-sm">
+          <div class="table-card-header bg-gradient-teal text-white d-flex align-items-center">
+            <i class="fas fa-history me-2 fs-6"></i>
+            <h6 class="mb-0">Previous Month Expenses</h6>
           </div>
-          <div class="card-body px-0">
+          <div class="table-card-body status-scrollable">
             <div class="table-responsive">
-              <table class="table table-striped table-hover align-middle mb-0">
+              <table class="table table-sm table-striped mb-0">
                 <thead class="table-light">
                   <tr>
                     <th>Item Name</th>
@@ -244,15 +259,13 @@
                     <td class="text-center">{{ expense.date.strftime('%Y-%m-%d') }}</td>
                     <td class="text-center">
                       <div class="btn-group btn-group-sm">
-                        <button type="button"
-                                class="btn btn-warning"
+                        <button type="button" class="btn btn-warning btn-action"
                                 data-bs-toggle="modal"
                                 data-bs-target="#editModal{{ expense.id }}"
                                 title="Edit">
                           <i class="fas fa-edit"></i>
                         </button>
-                        <button type="button"
-                                class="btn btn-danger"
+                        <button type="button" class="btn btn-danger btn-action"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteModal{{ expense.id }}"
                                 title="Delete">
@@ -271,50 +284,44 @@
     </div>
   </div>
 
-
-  <!-- ======================
-       6. Edit & Delete Modals
-       ====================== -->
+  <!-- 4. Edit & Delete Modals (unchanged) -->
   {% for expense in (expenses_current + expenses_previous) %}
   <!-- Edit Expense Modal -->
   <div class="modal fade" id="editModal{{ expense.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
-      <div class="modal-content">
-        <div class="modal-header bg-warning text-white">
-          <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Expense</h5>
+      <div class="modal-content modal-card">
+        <div class="modal-header bg-gradient-yellow text-dark d-flex align-items-center">
+          <i class="fas fa-edit me-2"></i>
+          <h5 class="modal-title">Edit Expense</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action="{{ url_for('edit_expense', expense_id=expense.id) }}" method="POST" class="needs-validation" novalidate>
           <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Item Name</label>
-              <input type="text"
-                     name="item_name"
-                     class="form-control form-control-lg"
-                     value="{{ expense.item_name }}"
-                     required>
+            <div class="mb-3 form-floating">
+              <input type="text" class="form-control" name="item_name"
+                     value="{{ expense.item_name }}" id="edit_item_{{ expense.id }}" placeholder="Item Name" required>
+              <label for="edit_item_{{ expense.id }}">Item Name</label>
+              <div class="invalid-feedback">Enter item name.</div>
             </div>
-            <div class="mb-3">
-              <label class="form-label">Price (Rs)</label>
-              <input type="number"
-                     step="0.01"
-                     name="price"
-                     class="form-control form-control-lg"
-                     value="{{ expense.price }}"
-                     required>
+            <div class="mb-3 form-floating">
+              <div class="input-group">
+                <span class="input-group-text bg-white">Rs</span>
+                <input type="number" step="0.01" class="form-control" name="price"
+                       value="{{ expense.price }}" id="edit_price_{{ expense.id }}" placeholder="Price" required>
+              </div>
+              <label for="edit_price_{{ expense.id }}">Price</label>
+              <div class="invalid-feedback">Enter a valid price.</div>
             </div>
-            <div class="mb-3">
-              <label class="form-label">Date</label>
-              <input type="date"
-                     name="date"
-                     class="form-control form-control-lg"
-                     value="{{ expense.date.strftime('%Y-%m-%d') }}"
-                     required>
+            <div class="mb-3 form-floating">
+              <input type="date" class="form-control" name="date"
+                     value="{{ expense.date.strftime('%Y-%m-%d') }}" id="edit_date_{{ expense.id }}" placeholder="Date" required>
+              <label for="edit_date_{{ expense.id }}">Date</label>
+              <div class="invalid-feedback">Choose a date.</div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-warning shadow-sm">Save Changes</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-gradient-green">Save Changes</button>
           </div>
         </form>
       </div>
@@ -324,213 +331,206 @@
   <!-- Delete Expense Modal -->
   <div class="modal fade" id="deleteModal{{ expense.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content">
-        <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title"><i class="fas fa-trash-alt me-2"></i>Delete Expense</h5>
+      <div class="modal-content modal-card">
+        <div class="modal-header bg-gradient-red text-white d-flex align-items-center">
+          <i class="fas fa-exclamation-triangle me-2 fs-5"></i>
+          <h5 class="modal-title">Confirm Delete</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>Are you sure you want to delete this expense?</p>
-          <p class="mb-1"><strong>Item:</strong> {{ expense.item_name }}</p>
-          <p class="mb-1"><strong>Price:</strong> Rs {{ expense.price }}</p>
-          <p class="mb-0"><strong>Date:</strong> {{ expense.date.strftime('%Y-%m-%d') }}</p>
+          <p>Are you sure you want to delete <strong>{{ expense.item_name }}</strong>?</p>
+          <p class="text-muted small">This action cannot be undone.</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Cancel</button>
-          <form action="{{ url_for('delete_expense', expense_id=expense.id) }}" method="POST" class="d-inline">
-            <button type="submit" class="btn btn-danger shadow-sm">Delete</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <form action="{{ url_for('delete_expense', expense_id=expense.id) }}" method="POST">
+            <button type="submit" class="btn btn-gradient-red">Delete</button>
           </form>
         </div>
       </div>
     </div>
   </div>
   {% endfor %}
-
 </div> <!-- /.expenses-page-container -->
 
 
-<!-- ======================================
-     Inline CSS (You can extract to style.css)
-     ====================================== -->
+<!-- ================================
+     Inline CSS (move to style.css if you prefer)
+     ================================ -->
 <style>
-  /* Page Container Background */
+  /* ---------------------------------------------------------------------------------
+     1. Page Wrapper & Background Overlay
+     --------------------------------------------------------------------------------- */
   .expenses-page-container {
-    background: linear-gradient(135deg, #f9fafb 0%, #e2e8f0 100%);
-    padding-bottom: 60px;
-  }
-
-  /* -------------------------------
-     1. Metric Cards Styles
-     ------------------------------- */
-  .metric-card {
     position: relative;
-    border-radius: 12px;
+    z-index: 1;
+    max-width: 900px;    /* limit width so content is centered on large screens */
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    background: rgba(255, 255, 255, 0.156); /* slightly transparent white over particles */
+    border-radius: 0.75rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  /* ---------------------------------------------------------------------------------
+     2. Summary Cards (Optional)
+     --------------------------------------------------------------------------------- */
+  .summary-row {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .summary-card {
+    border-radius: 0.5rem;
     overflow: hidden;
-    padding: 1.5rem 1rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 1rem;
+    position: relative;
+    min-height: 130px;
   }
-
-  .metric-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  }
-
-  .metric-card .card-icon {
+  .summary-card .card-icon {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    font-size: 2rem;
+    top: 12px;
+    right: 12px;
+    font-size: 1.75rem;
     opacity: 0.2;
   }
-
-  .metric-card .card-title {
+  .summary-card .card-title {
     font-size: 0.95rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
   }
-
-  .metric-card .card-value {
-    font-size: 2.25rem;
+  .summary-card .card-value {
+    font-size: 1.75rem;
     font-weight: 700;
     margin-bottom: 0.25rem;
   }
-
-  .metric-card .card-text {
-    font-size: 0.875rem;
-    opacity: 0.8;
+  .summary-card .card-text {
+    font-size: 0.8rem;
+    opacity: 0.9;
   }
-
-  /* Gradients for metric cards */
-  .bg-gradient-green {
-    background: linear-gradient(135deg, #34d399, #059669);
+  .summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   }
+  .bg-gradient-green { background: linear-gradient(135deg, #34d399, #059669); }
+  .bg-gradient-red   { background: linear-gradient(135deg, #f87171, #dc2626); }
+  .bg-gradient-blue  { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+  .bg-gradient-teal  { background: linear-gradient(135deg, #5eead4, #0d9488); }
 
-  .bg-gradient-red {
-    background: linear-gradient(135deg, #f87171, #b91c1c);
-  }
-
-  .bg-gradient-blue {
-    background: linear-gradient(135deg, #60a5fa, #2563eb);
-  }
-
-  .bg-gradient-teal {
-    background: linear-gradient(135deg, #5eead4, #0d9488);
-  }
-
-  /* -------------------------------
-     2. Form Cards Styles
-     ------------------------------- */
+  /* ---------------------------------------------------------------------------------
+     3. Form Section (Accordion)
+     --------------------------------------------------------------------------------- */
   .form-card {
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
+    border-radius: 0.5rem;
   }
-
-  .form-card:hover {
-    transform: translateY(-3px);
+  .form-card .accordion-button {
+    font-size: 1rem;
+    font-weight: 600;
   }
-
-  .form-card .card-header {
-    padding: 0.75rem 1.5rem;
+  .form-card .accordion-button:not(.collapsed) {
+    color: #fff;
+    background: #2563eb; /* Hovers to gradient-blue if needed */
+  }
+  .form-card-header {
+    padding: 0.75rem 1.25rem;
     border-bottom: none;
-    border-radius: 0;
+    border-radius: 0.5rem 0.5rem 0 0;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    background: #2563eb;
+    color: #fff;
   }
-
-  .form-card .card-body {
-    padding: 1.5rem;
+  .form-card-body {
+    padding: 1.25rem;
   }
-
+  /* Override Bootstrap's default collapse background */
+  .form-card .accordion-body {
+    background: #fff;
+  }
   .form-card .form-control,
   .form-card .form-select {
-    border: 1px solid #ced4da;
     border-radius: 0.5rem;
     padding: 0.75rem 1rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-
   .form-card .form-control:focus,
   .form-card .form-select:focus {
     border-color: #2563eb;
     box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
   }
-
   .btn-gradient-green {
     background: linear-gradient(135deg, #34d399, #059669) !important;
     border: none !important;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    color: #fff !important;
+    transition: transform 0.2s ease, opacity 0.2s ease;
   }
-
   .btn-gradient-green:hover {
-    opacity: 0.9;
     transform: translateY(-2px);
-  }
-
-  .btn-gradient-blue {
-    background: linear-gradient(135deg, #60a5fa, #2563eb) !important;
-    border: none !important;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  .btn-gradient-blue:hover {
     opacity: 0.9;
-    transform: translateY(-2px);
   }
 
-  /* -------------------------------
-     3. Table Styles
-     ------------------------------- */
+  /* ---------------------------------------------------------------------------------
+     4. Tabbed Tables Section
+     --------------------------------------------------------------------------------- */
+  .nav-tabs .nav-link {
+    font-weight: 500;
+    transition: background 0.2s ease;
+  }
+  .nav-tabs .nav-link.active {
+    background: #2563eb;
+    color: #fff !important;
+  }
   .table-card {
-    border-radius: 12px;
+    border-radius: 0.5rem;
     overflow: hidden;
-    transition: transform 0.3s ease;
+    margin-top: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-
   .table-card:hover {
     transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
   }
-
-  .table-card .card-header {
-    padding: 0.75rem 1.5rem;
-    border-bottom: none;
-    border-radius: 0;
+  .table-card-header {
+    padding: 0.75rem 1.25rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    background: #2563eb;
+    color: #fff;
   }
-
-  .table-responsive {
-    margin: 0 1.5rem 1.5rem 1.5rem;
+  /* Slightly different header color for Previous Month */
+  #previous-month .table-card-header {
+    background: #0d9488;
   }
-
-  .table th,
-  .table td {
+  .table-card-body {
+    padding: 0.5rem 1rem 1rem 1rem;
+  }
+  .table-sm th, .table-sm td {
+    padding: 0.5rem 0.75rem;
     vertical-align: middle;
-    padding: 0.75rem 1rem;
   }
-
-  .table thead th {
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-  }
-
   .table-striped > tbody > tr:nth-of-type(odd) {
     background-color: rgba(0, 0, 0, 0.03);
   }
-
   .table-hover tbody tr:hover {
     background-color: rgba(37, 99, 235, 0.1);
-    transform: scale(1.01);
-    transition: all 0.3s ease;
+    transform: scale(1.005);
+    transition: all 0.2s ease;
   }
-
-  .btn-group .btn {
-    width: 38px;
-    height: 38px;
+  .btn-action {
+    width: 36px;
+    height: 36px;
     padding: 0;
     border-radius: 50%;
     display: flex;
@@ -538,67 +538,78 @@
     justify-content: center;
     transition: transform 0.2s ease;
   }
-
-  .btn-group .btn:hover {
+  .btn-action:hover {
     transform: scale(1.1);
   }
-
-  .btn-group .btn i {
-    font-size: 1rem;
+  .btn-gradient-blue {
+    background: #2563eb !important;
+    border: none !important;
+    color: #fff !important;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .btn-gradient-blue:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
   }
 
-  /* =======================
-     4. Modal Styles
-     ======================= */
-  .modal-content {
-    border-radius: 0.75rem;
-    overflow: hidden;
-    transform: scale(0.97);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Scrollable for Previous Month if needed */
+  .status-scrollable {
+    max-height: 300px;
+    overflow-y: auto;
   }
 
-  .modal.show .modal-content {
-    transform: scale(1);
-  }
-
-  .modal-header {
-    border-bottom: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .modal-title {
-    font-weight: 600;
-  }
-
-  .btn-close {
-    filter: brightness(1.2);
-  }
-
-  /* =======================
-     5. Utility Animations
-     ======================= */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  .fade-in {
-    animation: fadeIn 0.5s ease forwards;
-  }
-
-  @media (max-width: 576px) {
-    .metric-card .card-value {
-      font-size: 1.75rem;
+  /* ---------------------------------------------------------------------------------
+     5. Utility & Responsive Tweaks
+     --------------------------------------------------------------------------------- */
+  @media (max-width: 767px) {
+    .summary-card {
+      margin-bottom: 1rem;
     }
-    .metric-card .card-icon {
-      font-size: 1.5rem;
+    .table-card {
+      margin-top: 1.5rem;
     }
   }
 </style>
 
-<!-- Font Awesome for Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+<!-- ======================================
+     JavaScript: Bootstrap Validation + Dynamic Fee Display
+     ====================================== -->
+<script>
+  // Bootstrap form validation
+  (function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+
+  // Update “Remaining fee” and default amount when selecting a student
+  document.addEventListener('DOMContentLoaded', function() {
+    const studentSelect = document.getElementById('student_name');
+    const amountInput   = document.getElementById('amount');
+    const remainingFeeText = document.getElementById('remaining_fee_text');
+
+    if (studentSelect) {
+      studentSelect.addEventListener('change', function() {
+        const opt = this.options[this.selectedIndex];
+        const remaining = opt.getAttribute('data-remaining');
+        if (remaining) {
+          amountInput.value = remaining;
+          remainingFeeText.textContent = `Remaining fee: Rs ${remaining}`;
+        } else {
+          amountInput.value = '';
+          remainingFeeText.textContent = '';
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}

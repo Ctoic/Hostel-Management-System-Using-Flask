@@ -4,43 +4,156 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Hostel Management{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Particles.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <style>
+        /* Full-page particles container */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #01050b; /* fallback background color */
+        }
+
+        /* Ensure page content sits above particles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Optional: tweak navbar transparency */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.75) !important;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="{{ url_for('home') }}">HMS</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-              <li class="nav-item active"><a class="nav-link" href="{{ url_for('admin_dashboard') }}">Home</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('enroll') }}">Enroll</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('rooms') }}">Rooms</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('students') }}">Students</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('expenses') }}">Expenses</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('collect_fee') }}">Fee Collection</a></li>
-            </ul>
-      </div>
-    </nav>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
 
-    <!-- Page Content -->
-    <div class="container mt-5">
-        {% block content %}{% endblock %}
-    </div>
+    <!-- Page Wrapper -->
+    <div class="content-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('home') }}">HMS</a>
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link{% if request.endpoint=='admin_dashboard' %} active{% endif %}" href="{{ url_for('admin_dashboard') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link{% if request.endpoint=='enroll' %} active{% endif %}" href="{{ url_for('enroll') }}">Enroll</a></li>
+                        <li class="nav-item"><a class="nav-link{% if request.endpoint=='rooms' %} active{% endif %}" href="{{ url_for('rooms') }}">Rooms</a></li>
+                        <li class="nav-item"><a class="nav-link{% if request.endpoint=='students' %} active{% endif %}" href="{{ url_for('students') }}">Students</a></li>
+                        <li class="nav-item"><a class="nav-link{% if request.endpoint=='expenses' %} active{% endif %}" href="{{ url_for('expenses') }}">Expenses</a></li>
+                        <li class="nav-item"><a class="nav-link{% if request.endpoint=='collect_fee' %} active{% endif %}" href="{{ url_for('collect_fee') }}">Fee Collection</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-    <!-- Footer -->
-    <footer class="footer bg-dark text-white">
-        <div class="text-center  bg-dark">
-            © 2024 Copyright:
-            <a class="text-reset fw-bold" href="https://github.com/Ctoic">Comprehensive Community Care</a>
+        <!-- Page Content -->
+        <div class="container mt-5">
+            {% block content %}{% endblock %}
         </div>
-    </footer>
 
-    <!-- Scripts -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <!-- Footer -->
+        <footer class="footer bg-dark text-white mt-5 py-3">
+            <div class="text-center">
+                © 2024 Copyright:
+                <a class="text-reset fw-bold" href="https://github.com/Ctoic">Comprehensive Community Care</a>
+            </div>
+        </footer>
+    </div> <!-- /.content-wrapper -->
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Initialize Particles.js -->
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: { value: '#ffffff' },
+                shape: {
+                    type: 'circle',
+                    stroke: { width: 0, color: '#000000' },
+                    polygon: { nb_sides: 5 }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: { enable: false }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: { enable: false }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 4,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'bounce',
+                    bounce: false,
+                    attract: { enable: false }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 400, line_linked: { opacity: 1 } },
+                    bubble: { distance: 200, size: 40, duration: 2, opacity: 8, speed: 3 },
+                    repulse: { distance: 200, duration: 0.4 },
+                    push: { particles_nb: 4 },
+                    remove: { particles_nb: 2 }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+
+    <!-- Custom Scripts -->
     <script src="{{ url_for('static', filename='navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='animations.js') }}"></script>
 </body>
