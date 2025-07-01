@@ -16,6 +16,8 @@ from sqlalchemy import extract
 import pandas as pd
 import openpyxl
 from flask_wtf.csrf import CSRFProtect, validate_csrf, CSRFError
+from datetime import datetime
+
 
 
 app = Flask(__name__)
@@ -594,6 +596,11 @@ def download_sample_excel():
         as_attachment=True,
         download_name='sample_student_template.xlsx'
     )
+
+@app.route('/about')
+def about():
+    current_year = datetime.now().year
+    return render_template('about.html', current_year=current_year)
 
 @app.route('/delete_student/<int:student_id>', methods=['POST'])
 @login_required
